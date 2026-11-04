@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amino Acid Career Match Quiz</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .quiz-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 20;
+    }
+
+    .ladder-title {
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+      color: var(--cyan-primary);
+      text-shadow: 0 0 10px var(--cyan-glow);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .ladder-sub {
+      font-size: 0.95rem;
+      color: #3b9db4;
+      margin-bottom: 1.2rem;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    /* Molecular Base Pair Diagram from Slides */
+    .base-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 1.4rem;
+      width: 100%;
+      max-width: 440px;
+    }
+    .base-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .base-cube {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: bold;
+      border-radius: 6px;
+      color: #0b0f27;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+    }
+    .cube-a, .cube-g-pink { background: #ff52b1; box-shadow: 0 0 14px var(--pink-glow); }
+    .cube-t, .cube-c-cyan { background: #4deeea; box-shadow: 0 0 14px var(--cyan-glow); }
+
+    .base-bridge {
+      flex: 1;
+      height: 3px;
+      margin: 0 14px;
+      background: repeating-linear-gradient(90deg, #fde172 0, #fde172 8px, transparent 8px, transparent 14px);
+    }
+
+    /* Quiz Question Panel */
+    .quiz-card {
+      width: 100%;
+      background: rgba(11, 15, 39, 0.88);
+      border: 3px solid var(--card-border);
+      border-radius: 28px;
+      padding: 1.8rem 2.2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .quiz-phase-pill {
+      align-self: center;
+      border: 2px solid #ffffff;
+      border-radius: 24px;
+      padding: 8px 26px;
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .question-prompt {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .quiz-option-btn {
+      background: rgba(8, 12, 32, 0.95);
+      border: 2.5px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px 14px;
+      color: #e4eaf5;
+      font-family: var(--font-retro);
+      font-size: 0.58rem;
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      min-height: 80px;
+    }
+    .quiz-option-btn:hover {
+      border-color: var(--cyan-primary);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    /* Outcome Panel */
+    .outcome-panel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.4rem;
+      padding: 2rem;
+    }
+    .outcome-role {
+      font-size: 1.6rem;
+      color: var(--pink-exp);
+      text-shadow: 0 0 16px var(--pink-glow);
+      letter-spacing: 2px;
+    }
+    .outcome-desc {
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      line-height: 1.7;
+      max-width: 720px;
+      color: #c9daf8;
+    }
+    .action-links {
+      display: flex;
+      gap: 1.6rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 980px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="crispr-page">
+  <div class="scanlines"></div>
+
+  <!-- 3D Rotating DNA Backgrounds -->
+  <canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+  <canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+  <main class="quiz-stage">
+    <h1 class="ladder-title" id="stage-heading">MOLECULAR BASE PAIRS</h1>
+    <p class="ladder-sub" id="stage-subheading">(1,000,000X)</p>
+
+    <!-- Base Pair Visualizer -->
+    <div class="base-diagram" id="base-diagram">
+      <div class="base-row">
+        <div class="base-cube cube-a">A</div>
+        <div class="base-bridge"></div>
+        <div class="base-cube cube-t">T</div>
+      </div>
+      <div class="base-row">
+        <div class="base-cube cube-c-cyan">C</div>
+        <div class="base-bridge"></div>
+        <div class="base-cube cube-g-pink">G</div>
+      </div>
+      <div class="base-row">
+        <div class="base-cube cube-a">G</div>
+        <div class="base-bridge"></div>
+        <div class="base-cube cube-t">C</div>
+      </div>
+    </div>
+
+    <!-- Active Question Card -->
+    <section class="quiz-card" id="quiz-card">
+      <div class="quiz-phase-pill" id="quiz-tag">WHAT AMINO ACID ARE YOU?</div>
+      <div class="question-prompt" id="q-prompt">Loading question...</div>
+      <div class="options-grid" id="options-grid"></div>
+    </section>
+
+    <!-- Outcome Card (Revealed on Completion) -->
+    <section class="quiz-card outcome-panel" id="outcome-card">
+      <div class="quiz-phase-pill">CODON SEQUENCE COMPLETED</div>
+      <h2 class="outcome-role" id="matched-role-title">FORENSIC DNA ANALYST</h2>
+      <p class="outcome-desc" id="matched-role-desc"></p>
+      <div class="action-links">
+        <a href="crispr.html" class="pixel-pill-btn"><span class="btn-text">START SIMULATION &rarr;</span></a>
+        <a href="index.html" class="pixel-pill-btn"><span class="btn-text">RETURN TO LADDER</span></a>
+        <button type="button" class="pixel-pill-btn" id="retake-btn"><span class="btn-text">RETAKE QUIZ</span></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cr-bar">
+    <div class="role-display-pill">
+      <span class="role-label">ROLE:</span>
+      <span class="role-value" id="current-role">IN DIAGNOSIS...</span>
+    </div>
+
+    <div class="cr-exp">
+      <div class="cr-exp-track">
+        <div class="cr-exp-fill" id="exp-fill" style="width: 25%;"></div>
+        <span class="cr-exp-label">QUIZ PROGRESS</span>
+      </div>
+    </div>
+
+    <div class="cr-actions">
+      <a href="index.html" class="cr-btn"><span>🚪</span> PORTAL</a>
+      <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+      <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+    </div>
+  </footer>
+
+  <script>
+    const QUIZ_QUESTIONS = [
+      {
+        tag: "WHAT AMINO ACID ARE YOU? (ENGAGEMENT)",
+        prompt: "1. WHICH OF THESE PROBLEM-SOLVING SCENARIOS SOUNDS MOST ENGAGING TO YOU?",
+        options: [
+          { text: "Investigating a crime scene or tracking down trace DNA foodborne illness evidence.", role: "DNA Analyst" },
+          { text: "Designing systems that use microbes or algae to clean up microplastics & runoff.", role: "Bioprocess Engineer" },
+          { text: "Running patient blood & biopsy samples in a clinical lab to diagnose rare genetic conditions.", role: "Clinical Technician" },
+          { text: "Reviewing audits & validation records to ensure manufacturing meets federal guidelines.", role: "Quality Systems Specialist" },
+          { text: "Modifying plant genes to resist invasive blights, droughts, and nutritional deficiencies.", role: "Plant Geneticist" },
+          { text: "Synthesizing and screening thousands of candidate molecules to isolate new cancer therapeutics.", role: "Discovery Research Scientist" }
+        ]
+      },
+      {
+        tag: "WHAT AMINO ACID ARE YOU? (WORK ENVIRONMENT)",
+        prompt: "2. WHERE DO YOU SEE YOURSELF SPENDING THE MAJORITY OF YOUR PROFESSIONAL TIME?",
+        options: [
+          { text: "Crime labs, containment units, or specialized diagnostic facilities analyzing evidence.", role: "DNA Analyst" },
+          { text: "Outdoor field sites, marine research vessels, or water-monitoring testing stations.", role: "Bioprocess Engineer" },
+          { text: "Diagnostic labs, blood banks, or clinical pathology departments within hospitals.", role: "Clinical Technician" },
+          { text: "Corporate offices, regulatory compliance desks, or pharmaceutical quality wings.", role: "Quality Systems Specialist" },
+          { text: "High-tech greenhouses, botanical gardens, or agricultural tissue culture farms.", role: "Plant Geneticist" },
+          { text: "High-tech pharmaceutical R&D cleanrooms, robotics suites, or university wet labs.", role: "Discovery Research Scientist" }
+        ]
+      },
+      {
+        tag: "WHAT AMINO ACID ARE YOU? (ANTI-PREFERENCE)",
+        prompt: "3. WHICH OF THESE WORKPLACE REALITIES WOULD BE LEAST TOLERABLE TO YOU?",
+        options: [
+          { text: "Working under strict legal chain-of-custody where data could be scrutinized in court.", role: "Clinical Technician" },
+          { text: "Working outdoors in bad weather or at messy environmental field sites.", role: "Quality Systems Specialist" },
+          { text: "Handling hazardous human bodily fluids and infectious diagnostic specimens regularly.", role: "Plant Geneticist" },
+          { text: "Spending long hours auditing dense FDA regulations, SOP manuals, and paperwork.", role: "Discovery Research Scientist" },
+          { text: "Working in hot, humid greenhouses or remote agricultural fields for entire seasons.", role: "DNA Analyst" },
+          { text: "Dealing with high trial failure rates where years of drug compound research lead nowhere.", role: "Bioprocess Engineer" }
+        ]
+      },
+      {
+        tag: "WHAT AMINO ACID ARE YOU? (TASK TOLERANCE)",
+        prompt: "4. WHICH OF THESE REPETITIVE LAB TASKS SOUNDS THE MOST ANNOYING TO PERFORM?",
+        options: [
+          { text: "Logging meticulous tracking details to ensure absolute zero evidence contamination.", role: "Plant Geneticist" },
+          { text: "Calibrating and running identical water chemistry sensor tests every single week.", role: "DNA Analyst" },
+          { text: "Loading robotic specimen centrifuges continuously without patient interaction.", role: "Discovery Research Scientist" },
+          { text: "Proofreading technical validation files for tiny grammatical or formatting errors.", role: "Bioprocess Engineer" },
+          { text: "Manually cross-pollinating plant rows and logging root growth month after month.", role: "Quality Systems Specialist" },
+          { text: "Running high-throughput multi-well plates where 99% of compounds yield negative hits.", role: "Clinical Technician" }
+        ]
+      }
+    ];
+
+    const ROLE_DETAILS = {
+      "DNA Analyst": "Profiles and extracts DNA evidence, comparing trace samples against known databases to solve forensic inquiries. Salary: $67,440 - $81,367 (Bachelors Degree).",
+      "Bioprocess Engineer": "Designs bioreactor equipment and fermentation pipelines to scale microbial proteins, biofuels, and bioplastics. Salary: $112,139 (Bachelors Degree).",
+      "Clinical Technician": "Prepares patient specimens, operates robotic analyzers, and performs clinical tests in diagnostic hospital environments. Salary: $45,162 (Associates or Bachelors).",
+      "Quality Systems Specialist": "Audits laboratory SOPs and manufacturing protocols to ensure treatments comply with strict government standards. Salary: $93,599 (Bachelors Degree).",
+      "Plant Geneticist": "Applies gene editing to manipulate crop DNA, improving harvest yields, disease immunity, and climate tolerance. Salary: $106,000 (Bachelors or Masters).",
+      "Discovery Research Scientist": "Conducts wet-lab screening experiments to invent therapeutic molecules and target novel cancer therapies. Salary: $115,000 (Bachelors or Ph.D.)."
+    };
+
+    const safeGet = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+
+    let curQ = 0;
+    const votes = {};
+    let firstPick = null; // first answer breaks ties
+
+    function renderQuestion() {
+      const q = QUIZ_QUESTIONS[curQ];
+      document.getElementById('quiz-tag').textContent = q.tag;
+      document.getElementById('q-prompt').textContent = q.prompt;
+      
+      const grid = document.getElementById('options-grid');
+      grid.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.type = 'button';
+        btn.textContent = opt.text;
+        btn.addEventListener('click', () => chooseOption(opt.role));
+        grid.appendChild(btn);
+      });
+
+      const pct = ((curQ + 1) / QUIZ_QUESTIONS.length) * 100;
+      document.querySelector('.cr-exp-label').textContent = `QUESTION ${curQ + 1} OF ${QUIZ_QUESTIONS.length}`;
+      document.getElementById('exp-fill').style.width = pct + '%';
+    }
+
+    function chooseOption(role) {
+      if (curQ === 0) firstPick = role;
+      votes[role] = (votes[role] || 0) + 1;
+      curQ++;
+
+      const remaining = QUIZ_QUESTIONS.length - curQ;
+
+      if (curQ < QUIZ_QUESTIONS.length) {
+        if (window.setBioGuideSpeech) {
+          if (remaining === 1) {
+            setBioGuideSpeech("Almost there! 1 Question left!");
+          } else {
+            setBioGuideSpeech(`Keep going! ${remaining} Questions left!`);
+          }
+        }
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      let matchedRole = firstPick || "DNA Analyst";
+      let topCount = -1;
+      for (const [r, cnt] of Object.entries(votes)) {
+        if (cnt > topCount || (cnt === topCount && r === firstPick)) {
+          topCount = cnt;
+          matchedRole = r;
+        }
+      }
+
+      safeSet('biotech_matched_role', matchedRole);
+      showResult(matchedRole);
+
+      if (window.setBioGuideSpeech) {
+        setBioGuideSpeech(`Outstanding diagnostic work! Codon decoded: ${matchedRole}! Now let's enter the lab—click below to begin the CRISPR simulation!`);
+      }
+    }
+
+    function showResult(matchedRole) {
+      document.getElementById('quiz-card').style.display = 'none';
+      document.getElementById('base-diagram').style.display = 'none';
+      document.getElementById('stage-heading').textContent = "MATCH RESULT";
+      document.getElementById('stage-subheading').textContent = "(CODON DECODED)";
+
+      const outcomeCard = document.getElementById('outcome-card');
+      outcomeCard.style.display = 'flex';
+      document.getElementById('matched-role-title').textContent = matchedRole.toUpperCase();
+      document.getElementById('matched-role-desc').textContent = ROLE_DETAILS[matchedRole] || "Ready for field simulation.";
+      document.getElementById('current-role').textContent = matchedRole.toUpperCase();
+      document.getElementById('exp-fill').style.width = '100%';
+      document.querySelector('.cr-exp-label').textContent = 'QUIZ COMPLETE';
+    }
+
+    document.getElementById('retake-btn').addEventListener('click', () => {
+      if (!confirm('Retaking the quiz will also reset your simulation and training progress. Continue?')) return;
+      ['biotech_matched_role', 'biotech_sim_complete', 'biotech_training_complete', 'biotech_training_answers']
+        .forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+      location.reload();
+    });
+
+    const savedRole = safeGet('biotech_matched_role');
+    if (savedRole && ROLE_DETAILS[savedRole]) showResult(savedRole);
+    else renderQuestion();
+  </script>
+
+  <script src="helix.js"></script>
+  <script src="labnotebook.js"></script>
+  <script src="biobot.js"></script>
+</body>
+</html>
