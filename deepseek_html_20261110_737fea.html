@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Centrifuge Balance | Lab Simulation</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧪%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* ---------- CENTRIFUGE SIM ---------- */
+  .cf-stage{position:relative;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    width:100%;max-width:1180px;flex:1;min-height:0;margin:auto 0;gap:.6rem;padding:0 1rem}
+  .cf-title{font-family:var(--font-retro);font-size:clamp(1rem,1.4vw,1.4rem);letter-spacing:2px;
+    color:var(--cyan-primary);text-shadow:0 0 10px var(--cyan-glow);text-align:center;margin:.2rem 0}
+  .cf-intro{font-family:var(--font-body);font-size:clamp(.82rem,.95vw,.98rem);max-width:760px;
+    text-align:center;color:#9abce8;line-height:1.45;margin-bottom:.2rem}
+  .cf-hud{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;font-family:var(--font-retro);
+    font-size:.6rem;letter-spacing:1px;color:#8edddb;margin-bottom:.3rem}
+  .cf-hud span{background:rgba(8,12,32,.85);border:1.5px solid var(--card-border);border-radius:20px;
+    padding:6px 14px}
+  .cf-hud b{color:#fff}
+
+  /* Rotor */
+  .rotor-wrap{position:relative;width:clamp(300px,44vh,460px);aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;margin:.3rem auto}
+  .rotor{
+    position:relative;width:100%;height:100%;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#2a4270 0%,#101a38 60%,#050a1e 100%);
+    border:4px solid var(--cyan-primary);
+    box-shadow:0 0 32px rgba(77,238,234,.35),inset 0 0 28px rgba(0,0,0,.8);
+    transition:transform .12s linear;
+  }
+  .rotor.spinning{animation:spin 0.28s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 12 slots on the rotor (6 pairs, diametrically opposed) */
+  .slot{
+    position:absolute;width:13%;height:13%;border-radius:50%;
+    background:rgba(0,0,0,.55);border:2px dashed rgba(143,179,232,.55);
+    display:grid;place-items:center;
+    transform:translate(-50%,-50%);
+    transition:background .15s,border-color .15s,box-shadow .15s;
+  }
+  .slot.filled{border-style:solid;border-color:#fff;background:rgba(77,238,234,.12)}
+  .slot.over{border-color:#fde172;box-shadow:0 0 14px #fde172}
+  .slot.bad{border-color:#ff5c6c;box-shadow:0 0 18px #ff5c6c;animation:shake .3s}
+  @keyframes shake{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(-54%,-50%)}75%{transform:translate(-46%,-50%)}}
+
+  /* Microfuge tube */
+  .tube{
+    width:64%;height:96%;border-radius:40% 40% 45% 45%/60% 60% 40% 40%;
+    background:linear-gradient(180deg,#eaf2ff 0%,#b8cfe8 100%);
+    border:1.5px solid #fff;
+    position:relative;
+    cursor:grab;
+    touch-action:none;
+    box-shadow:0 0 8px rgba(77,238,234,.6);
+    transition:transform .12s;
+  }
+  .tube:active{cursor:grabbing;transform:scale(1.12)}
+  .tube::after{content:'';position:absolute;left:50%;top:18%;width:52%;height:44%;
+    transform:translateX(-50%);border-radius:0 0 40% 40%/0 0 60% 60%;
+    background:var(--liquid,#ff52b1);box-shadow:0 0 6px var(--liquid,#ff52b1)}
+  .tube.dragging{opacity:.6}
+
+  /* Dragging ghost */
+  .tube-ghost{position:fixed;width:44px;height:56px;border-radius:40% 40% 45% 45%/60% 60% 40% 40%;
+    background:linear-gradient(180deg,#eaf2ff 0%,#b8cfe8 100%);border:1.5px solid #fff;
+    pointer-events:none;z-index:9999;box-shadow:0 0 14px rgba(77,238,234,.9);transform:translate(-50%,-50%)}
+  .tube-ghost::after{content:'';position:absolute;left:50%;top:18%;width:52%;height:44%;
+    transform:translateX(-50%);border-radius:0 0 40% 40%/0 0 60% 60%;
+    background:var(--liquid,#ff52b1);box-shadow:0 0 6px var(--liquid,#ff52b1)}
+
+  /* Tray */
+  .tray{display:flex;gap:14px;justify-content:center;align-items:flex-end;
+    padding:.7rem 1.2rem;margin-top:.4rem;
+    background:rgba(8,12,32,.85);border:2px solid var(--card-border);border-radius:20px;
+    min-height:74px;flex-wrap:wrap}
+  .tray-label{font-family:var(--font-retro);font-size:.55rem;color:#8edddb;letter-spacing:1px;
+    align-self:center;margin-right:.4rem}
+  .tray .tube{width:34px;height:46px;flex:none}
+
+  /* Buttons */
+  .cf-actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
+  .cf-btn{background:#000;border:2.5px solid #fff;border-radius:16px;color:#fff;
+    font-family:var(--font-retro);font-size:.66rem;letter-spacing:1.5px;padding:.85rem 1.5rem;
+    cursor:pointer;transition:all .2s;text-decoration:none}
+  .cf-btn:hover:not(:disabled){background:#fff;color:#000;box-shadow:0 0 18px rgba(255,255,255,.7);
+    transform:translateY(-2px)}
+  .cf-btn:disabled{opacity:.4;cursor:not-allowed}
+  .cf-btn.primary{border-color:var(--cyan-primary);color:var(--cyan-primary)}
+  .cf-btn.primary:hover:not(:disabled){background:var(--cyan-primary);color:#071329;
+    box-shadow:0 0 22px var(--cyan-primary)}
+  .cf-btn:focus-visible{outline:3px solid var(--cyan-primary);outline-offset:3px}
+
+  /* Feedback */
+  .cf-feedback{font-family:var(--font-body);font-weight:700;font-size:1rem;text-align:center;
+    max-width:760px;min-height:1.5em;color:#9be06a;line-height:1.4;margin:.2rem 0}
+  .cf-feedback.warn{color:#ffd166}
+  .cf-feedback.bad{color:#ff5c6c}
+
+  /* Win overlay */
+  .cf-overlay{position:fixed;inset:0;background:rgba(4,7,20,.94);z-index:9998;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;
+    opacity:0;pointer-events:none;transition:opacity .35s ease;padding:1.2rem;text-align:center}
+  .cf-overlay.show{opacity:1;pointer-events:auto}
+  .cf-overlay h2{font-family:var(--font-retro);font-size:clamp(1.1rem,1.6vw,1.5rem);
+    color:var(--cyan-primary);text-shadow:0 0 14px var(--cyan-glow)}
+  .cf-overlay p{font-family:var(--font-body);font-size:1rem;color:#c9daf8;max-width:520px;line-height:1.5}
+  .cf-overlay .ov-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px}
+
+  @media (max-width:640px){
+    .rotor-wrap{width:min(78vw,340px)}
+    .tray{gap:8px;padding:.5rem}
+    .tray .tube{width:26px;height:36px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .rotor.spinning{animation:none}
+    .slot.bad{animation:none}
+    .tube,.cf-overlay,.cf-btn{transition:none!important}
+  }
+</style>
+</head>
+<body class="crispr-page">
+<div class="scanlines"></div>
+<canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+<canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+<main class="cf-stage">
+  <h1 class="cf-title">MICROFUGE BALANCE</h1>
+  <p class="cf-intro">
+    The rotor spins at <strong>14,000 RPM</strong>. An unbalanced load will destroy the machine and the samples.
+    Drag each tube from the tray into a slot so that every filled slot has an <strong>equal-weight tube directly opposite it</strong>.
+    Then press <strong>RUN</strong>.
+  </p>
+
+  <div class="cf-hud">
+    <span>TUBES LOADED: <b id="cf-loaded">0</b></span>
+    <span>SLOTS: <b>12</b></span>
+    <span>ATTEMPTS: <b id="cf-attempts">0</b></span>
+  </div>
+
+  <div class="rotor-wrap">
+    <div class="rotor" id="rotor">
+      <!-- 12 slots injected by JS at 30° increments -->
+    </div>
+  </div>
+
+  <div class="tray" id="tray">
+    <span class="tray-label">TUBE TRAY &rarr;</span>
+    <!-- 6 tubes injected by JS -->
+  </div>
+
+  <div class="cf-feedback" id="cf-feedback" role="status" aria-live="polite">
+    Drag tubes into the rotor. Pairs must be directly opposite each other.
+  </div>
+
+  <div class="cf-actions">
+    <button class="cf-btn primary" id="cf-run" type="button" disabled>RUN (14,000 RPM)</button>
+    <button class="cf-btn" id="cf-reset" type="button">RESET</button>
+    <a class="cf-btn" href="index.html">EXIT SIM</a>
+  </div>
+</main>
+
+<footer class="cr-bar">
+  <div class="role-display-pill">
+    <span class="role-label">ROLE:</span>
+    <span class="role-value" id="current-role">DNA ANALYST</span>
+  </div>
+  <div class="cr-exp">
+    <div class="cr-exp-track">
+      <div class="cr-exp-fill" id="exp-fill" style="width:35%"></div>
+      <span class="cr-exp-label">SIMULATION</span>
+    </div>
+  </div>
+  <div class="cr-actions">
+    <a href="index.html" class="cr-btn"><span>🚪</span> EXIT SIM</a>
+    <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+    <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+  </div>
+</footer>
+
+<!-- Win overlay -->
+<div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true" aria-label="Centrifuge balanced">
+  <h2>ROTOR BALANCED!</h2>
+  <p>Your tubes are perfectly counter-weighted. The centrifuge ran clean at 14,000 RPM and your samples are separated.</p>
+  <div class="ov-actions">
+    <a href="index.html" class="cf-btn primary">RETURN TO LADDER</a>
+    <button class="cf-btn" id="cf-replay" type="button">RUN AGAIN</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     CENTRIFUGE BALANCE — Drag-and-drop with keyboard fallback.
+     Rules:
+       • 6 tubes, 12 slots (6 opposite pairs).
+       • A pair is "balanced" when both opposite slots hold a tube.
+       • Rotor may also be fully loaded (all 12) — always balanced.
+       • Win when every loaded slot has a partner AND ≥2 tubes loaded.
+     ============================================================ */
+
+  const SLOT_COUNT = 12;
+  const ROTOR = document.getElementById('rotor');
+  const TRAY = document.getElementById('tray');
+  const FEEDBACK = document.getElementById('cf-feedback');
+  const RUN_BTN = document.getElementById('cf-run');
+  const RESET_BTN = document.getElementById('cf-reset');
+  const LOADED_EL = document.getElementById('cf-loaded');
+  const ATTEMPTS_EL = document.getElementById('cf-attempts');
+  const OVERLAY = document.getElementById('cf-overlay');
+  const REPLAY_BTN = document.getElementById('cf-replay');
+
+  /* Liquid colors — pairs share a color so users can visually match */
+  const PAIR_COLORS = ['#ff52b1', '#4deeea', '#fde172', '#9be06a', '#c9a0ff', '#ffa06b'];
+
+  let attempts = 0;
+  let running = false;
+
+  /* ---------- Build rotor slots ---------- */
+  // 12 slots at 30° increments, radius 38% of the rotor
+  const slots = [];
+  for (let i = 0; i < SLOT_COUNT; i++) {
+    const angle = (i * (360 / SLOT_COUNT)) * Math.PI / 180;
+    const x = 50 + 38 * Math.cos(angle - Math.PI / 2);
+    const y = 50 + 38 * Math.sin(angle - Math.PI / 2);
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.dataset.index = i;
+    slot.style.left = x + '%';
+    slot.style.top = y + '%';
+    slot.setAttribute('role', 'button');
+    slot.setAttribute('tabindex', '0');
+    slot.setAttribute('aria-label', 'Rotor slot ' + (i + 1) + ', empty');
+    slot.innerHTML = '';
+    ROTOR.appendChild(slot);
+    slots.push(slot);
+  }
+
+  /* ---------- Build tubes ---------- */
+  // 6 tubes, each with a pair color. Each tube has a "weight" matching its pair.
+  const tubes = [];
+  for (let i = 0; i < 6; i++) {
+    const tube = document.createElement('div');
+    tube.className = 'tube';
+    tube.draggable = false; // we handle drag ourselves for touch
+    tube.dataset.color = PAIR_COLORS[i];
+    tube.style.setProperty('--liquid', PAIR_COLORS[i]);
+    tube.dataset.home = 'tray';
+    tube.setAttribute('role', 'button');
+    tube.setAttribute('tabindex', '0');
+    tube.setAttribute('aria-label', 'Microfuge tube, color ' + PAIR_COLORS[i]);
+    tube.innerHTML = '';
+    TRAY.appendChild(tube);
+    tubes.push(tube);
+  }
+
+  /* ---------- Helpers ---------- */
+  function slotOf(tube) {
+    return tube.dataset.home && tube.dataset.home !== 'tray'
+      ? slots[+tube.dataset.home] : null;
+  }
+  function tubeIn(slot) {
+    return slot ? slot.querySelector('.tube') : null;
+  }
+  function isOpposite(a, b) {
+    // 12 slots → opposite = +6 mod 12
+    return (a + 6) % 12 === b;
+  }
+  function loadedCount() {
+    return slots.filter(s => s.querySelector('.tube')).length;
+  }
+  function allPairsBalanced() {
+    const filled = slots.map((s, i) => s.querySelector('.tube') ? i : -1).filter(i => i >= 0);
+    if (filled.length < 2) return false;
+    return filled.every(i => {
+      const opp = (i + 6) % 12;
+      return !!slots[opp].querySelector('.tube');
+    });
+  }
+
+  /* ---------- Place tube in slot ---------- */
+  function placeTube(tube, slot) {
+    if (!slot) {
+      // return to tray
+      slot = null;
+    }
+    const oldSlot = slotOf(tube);
+    if (oldSlot) {
+      oldSlot.innerHTML = '';
+      oldSlot.classList.remove('filled');
+      oldSlot.setAttribute('aria-label', 'Rotor slot ' + (+oldSlot.dataset.index + 1) + ', empty');
+    }
+    if (slot) {
+      // if slot already has a tube, swap it to tray
+      const occupant = slot.querySelector('.tube');
+      if (occupant) {
+        occupant.remove();
+        TRAY.appendChild(occupant);
+        occupant.dataset.home = 'tray';
+        occupant.style.position = '';
+        occupant.style.left = '';
+        occupant.style.top = '';
+        occupant.style.transform = '';
+      }
+      slot.innerHTML = '';
+      slot.appendChild(tube);
+      slot.classList.add('filled');
+      slot.setAttribute('aria-label', 'Rotor slot ' + (+slot.dataset.index + 1) + ', filled');
+      tube.dataset.home = slot.dataset.index;
+      // reset visual
+      tube.style.position = '';
+      tube.style.left = '';
+      tube.style.top = '';
+      tube.style.transform = '';
+      tube.style.width = '';
+      tube.style.height = '';
+    } else {
+      TRAY.appendChild(tube);
+      tube.dataset.home = 'tray';
+    }
+  }
+
+  /* ---------- Drag & drop (mouse + touch) ---------- */
+  let dragging = null, ghost = null, grabOffset = { x: 0, y: 0 };
+
+  function startDrag(tube, clientX, clientY) {
+    if (running) return;
+    dragging = tube;
+    const rect = tube.getBoundingClientRect();
+    grabOffset.x = clientX - rect.left - rect.width / 2;
+    grabOffset.y = clientY - rect.top - rect.height / 2;
+    ghost = document.createElement('div');
+    ghost.className = 'tube-ghost';
+    ghost.style.setProperty('--liquid', tube.dataset.color);
+    ghost.style.left = clientX + 'px';
+    ghost.style.top = clientY + 'px';
+    document.body.appendChild(ghost);
+    tube.classList.add('dragging');
+  }
+  function moveDrag(clientX, clientY) {
+    if (!dragging || !ghost) return;
+    ghost.style.left = clientX + 'px';
+    ghost.style.top = clientY + 'px';
+    // highlight nearest slot
+    slots.forEach(s => s.classList.remove('over'));
+    const target = slotAtPoint(clientX, clientY);
+    if (target) target.classList.add('over');
+  }
+  function endDrag(clientX, clientY) {
+    if (!dragging) return;
+    const tube = dragging;
+    const target = slotAtPoint(clientX, clientY);
+    slots.forEach(s => s.classList.remove('over'));
+    if (ghost) { ghost.remove(); ghost = null; }
+    tube.classList.remove('dragging');
+    dragging = null;
+
+    if (target) {
+      placeTube(tube, target);
+    }
+    // else: snap back (no change needed — tube is still in its original slot/tray)
+    updateHUD();
+  }
+
+  function slotAtPoint(x, y) {
+    // Use elementFromPoint, then walk up to find a .slot
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    return el.closest('.slot');
+  }
+
+  // Pointer events unify mouse + touch + pen
+  function attachTubeListeners(tube) {
+    tube.addEventListener('pointerdown', (e) => {
+      if (running) return;
+      e.preventDefault();
+      tube.setPointerCapture(e.pointerId);
+      startDrag(tube, e.clientX, e.clientY);
+    });
+    tube.addEventListener('pointermove', (e) => {
+      if (dragging !== tube) return;
+      moveDrag(e.clientX, e.clientY);
+    });
+    tube.addEventListener('pointerup', (e) => {
+      if (dragging !== tube) return;
+      endDrag(e.clientX, e.clientY);
+    });
+    tube.addEventListener('pointercancel', () => {
+      if (dragging === tube) {
+        if (ghost) { ghost.remove(); ghost = null; }
+        tube.classList.remove('dragging');
+        dragging = null;
+        slots.forEach(s => s.classList.remove('over'));
+      }
+    });
+    // Keyboard: Enter/Space on tube → cycle through empty slots
+    tube.addEventListener('keydown', (e) => {
+      if (running) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        // find first empty slot not opposite-imbalanced? Just first empty.
+        const empty = slots.find(s => !s.querySelector('.tube'));
+        if (empty) placeTube(tube, empty);
+        else placeTube(tube, null);
+        updateHUD();
+      }
+    });
+  }
+  tubes.forEach(attachTubeListeners);
+
+  // Also allow clicking a filled slot to pull the tube back to tray
+  slots.forEach(slot => {
+    slot.addEventListener('keydown', (e) => {
+      if (running) return;
+      if ((e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        const t = tubeIn(slot);
+        if (t) { placeTube(t, null); updateHUD(); }
+      }
+    });
+  });
+
+  // Drop onto tray = return to tray
+  TRAY.addEventListener('pointerup', (e) => {
+    if (dragging && TRAY.contains(e.target)) {
+      // handled by endDrag (slotAtPoint returns null over tray) — tube stays
+    }
+  });
+
+  /* ---------- HUD & run ---------- */
+  function updateHUD() {
+    const n = loadedCount();
+    LOADED_EL.textContent = n;
+    RUN_BTN.disabled = n < 2 || running;
+    // Clear stale "bad" markers
+    slots.forEach(s => s.classList.remove('bad'));
+  }
+
+  function setFeedback(msg, cls) {
+    FEEDBACK.textContent = msg;
+    FEEDBACK.className = 'cf-feedback' + (cls ? ' ' + cls : '');
+  }
+
+  function runCentrifuge() {
+    if (running) return;
+    if (loadedCount() < 2) {
+      setFeedback('Load at least one opposite pair of tubes before running.', 'warn');
+      return;
+    }
+    attempts++;
+    ATTEMPTS_EL.textContent = attempts;
+    running = true;
+    RUN_BTN.disabled = true;
+
+    // Check balance
+    const filled = slots.map((s, i) => s.querySelector('.tube') ? i : -1).filter(i => i >= 0);
+    const unbalanced = filled.filter(i => !slots[(i + 6) % 12].querySelector('.tube'));
+
+    if (unbalanced.length === 0) {
+      // WIN
+      setFeedback('Balanced! Spinning up to 14,000 RPM…', '');
+      ROTOR.classList.add('spinning');
+      try { localStorage.setItem('biotech_centrifuge_complete', 'true'); } catch (e) {}
+      setTimeout(() => {
+        ROTOR.classList.remove('spinning');
+        running = false;
+        setFeedback('Run complete. Samples separated cleanly. Nice work!', '');
+        OVERLAY.classList.add('show');
+        OVERLAY.querySelector('a')?.focus();
+      }, 1800);
+    } else {
+      // FAIL
+      unbalanced.forEach(i => slots[i].classList.add('bad'));
+      setFeedback(
+        'Unbalanced! Slots ' +
+        unbalanced.map(i => '#' + (i + 1)).join(', ') +
+        ' have no opposite partner. The rotor would vibrate and could crack. Redistribute the tubes.',
+        'bad'
+      );
+      // shake rotor briefly
+      ROTOR.style.transform = 'translateX(3px)';
+      setTimeout(() => { ROTOR.style.transform = ''; }, 120);
+      running = false;
+      RUN_BTN.disabled = false;
+    }
+    updateHUD();
+  }
+
+  RUN_BTN.addEventListener('click', runCentrifuge);
+
+  RESET_BTN.addEventListener('click', reset);
+
+  function reset() {
+    if (running) return;
+    slots.forEach(s => { s.innerHTML = ''; s.classList.remove('filled', 'bad', 'over'); });
+    tubes.forEach(t => { t.dataset.home = 'tray'; t.style.position = ''; t.style.left = ''; t.style.top = ''; t.style.transform = ''; t.style.width = ''; t.style.height = ''; TRAY.appendChild(t); });
+    attempts = 0;
+    ATTEMPTS_EL.textContent = 0;
+    setFeedback('Drag tubes into the rotor. Pairs must be directly opposite each other.');
+    updateHUD();
+  }
+
+  REPLAY_BTN.addEventListener('click', () => {
+    OVERLAY.classList.remove('show');
+    reset();
+  });
+
+  // Close overlay with Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && OVERLAY.classList.contains('show')) {
+      OVERLAY.classList.remove('show');
+      reset();
+    }
+  });
+
+  /* ---------- Restore role pill ---------- */
+  try {
+    const r = localStorage.getItem('biotech_matched_role');
+    if (r) document.getElementById('current-role').textContent = r.toUpperCase();
+  } catch (e) {}
+
+  updateHUD();
+})();
+</script>
+
+<script src="helix.js"></script>
+<script src="labnotebook.js"></script>
+<script src="biobot.js"></script>
+</body>
+</html>
