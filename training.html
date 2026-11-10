@@ -16,7 +16,7 @@
   .tr-stage { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; width: 100%; max-width: 900px; margin: 0 auto; animation: fadeIn .35s ease; position: relative; z-index: 20; min-height: 0; overflow-y: auto; padding: 6px 8px; }
   .tr-hidden { display: none !important; }
 
-  /* DNA zoom ladder (steps 3 & 4) */
+  /* DNA zoom ladder (steps 4 & 5) */
   .ladder { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: .6rem 0; width: 100%; }
   .rung { display: flex; align-items: center; height: 26px; }
   .rung i { width: 26px; height: 26px; border-radius: 50%; background: #1e3a6e; }
@@ -132,7 +132,7 @@
       tip: 'Strong answers listen to both goals, find the shared one (reliable data), and propose a compromise such as staged deliveries.' }
   ];
 
-  const STAGES = ['step3', 'q0', 'q1', 'q2', 'forum', 'step4', 'cert'];
+  const STAGES = ['step4', 'q0', 'q1', 'q2', 'forum', 'step5', 'cert'];
   const EXP = [15, 65, 67, 70, 77, 96, 100];
   const answers = [];
   let idx = 0;
@@ -157,11 +157,11 @@
   function show(html) { stage.style.animation = 'none'; stage.offsetHeight; stage.style.animation = ''; stage.innerHTML = html; }
 
   function renderStep(n) {
-    const isThree = n === 3;
+    const isFour = n === 4;
     setHead('DNA', '(10,200X)');
-    show(`${ladder(isThree ? 3 : 0, isThree ? 'STEP 3: INDUSTRY TRAINING' : 'STEP 4: CERTIFICATION')}
-      <p class="hint">${isThree ? 'Zoom in to the molecular level to practice the soft skills every lab team relies on.' : 'You have completed every training task. Zoom in to claim your certificate.'}</p>
-      <div class="tr-row"><a class="tr-btn" href="index.html">HOME</a><button class="tr-btn" id="go" type="button">${isThree ? 'START TRAINING' : 'CLAIM CERTIFICATE'}</button></div>`);
+    show(`${ladder(isFour ? 3 : 0, isFour ? 'STEP 4: INDUSTRY TRAINING' : 'STEP 5: CERTIFICATION')}
+      <p class="hint">${isFour ? 'Zoom in to the molecular level to practice the soft skills every lab team relies on.' : 'You have completed every training task. Zoom in to claim your certificate.'}</p>
+      <div class="tr-row"><a class="tr-btn" href="index.html">HOME</a><button class="tr-btn" id="go" type="button">${isFour ? 'START TRAINING' : 'CLAIM CERTIFICATE'}</button></div>`);
     $('#go').onclick = next;
     $('#go').focus();
   }
@@ -249,8 +249,8 @@
   function render() {
     const s = STAGES[idx];
     setExp(EXP[idx]);
-    if (s === 'step3') renderStep(3);
-    else if (s === 'step4') renderStep(4);
+    if (s === 'step4') renderStep(4);
+    else if (s === 'step5') renderStep(5);
     else if (s === 'forum') renderForum();
     else if (s === 'cert') renderCert();
     else renderQuestion(+s[1]);

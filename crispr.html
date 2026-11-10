@@ -39,7 +39,6 @@
       transform: translateY(-2px) scale(1.02);
       box-shadow: 0 0 28px #ffffff !important;
     }
-    /* Canvas resolution is matched to its on-screen size in JS so circles/text never stretch */
     body.crispr-page #game { flex: 1 1 0 !important; height: auto !important; min-height: 0 !important; }
   </style>
 </head>
@@ -51,7 +50,7 @@
 
   <main class="cr-stage">
     <h1 class="cr-title">CRISPR CAS9 DNA REPAIR</h1>
-    <p class="cr-intro">AUG is the universal start codon. Aim your Cas9 laser and target the bases in order: <strong>A &rarr; U &rarr; G &rarr; A &rarr; G &rarr; A</strong>.</p>
+    <p class="cr-intro">First step of the ladder! Aim your Cas9 laser and target the bases in order: <strong>A &rarr; U &rarr; G &rarr; A &rarr; G &rarr; A</strong>. Complete this to unlock your career discovery path.</p>
 
     <section class="cr-frame" aria-label="CRISPR Cas9 DNA repair game">
       <div class="cr-hud">
@@ -59,7 +58,6 @@
         <span id="target">TARGET SEQUENCE: A-U-G-A-G-A</span>
         <span id="health">HEALTH: 100%</span>
       </div>
-      <!-- Fixed Proportion Canvas -->
       <canvas id="game" width="1180" height="600"></canvas>
 
       <div class="cr-overlay show" id="overlay">
@@ -237,8 +235,6 @@
     const $ = id => document.getElementById(id);
 
     let bases, bullets, parts, idx, score, health, running = false, keys = {}, cool = 0;
-    
-    // Lifted cannon safely up from the bottom so it's never cut off
     const player = { x: W/2, w: 72, h: 26, speed: 5.8, yBottomOffset: 38 };
     const floorY = () => Math.max(160, H - 150);
 
@@ -305,13 +301,11 @@
       cool = 14;
     }
 
-    // ADVANCES TO NEXT STAGE WITHOUT SOFTLOCK
     function end(win) {
       running = false;
       Sound.stopBGM();
       if (win) {
         Sound.win();
-        // Record simulation complete to unlock Step 3
         try { localStorage.setItem('biotech_sim_complete', 'true'); } catch (e) {}
       } else {
         Sound.lose();
@@ -319,13 +313,13 @@
 
       $('ov-title').textContent = win ? 'SEQUENCE REPAIRED!' : 'DNA DAMAGED!';
       $('ov-text').innerHTML = win 
-        ? 'AUG Codon found! Protein synthesis initiated. Step 2 Simulation completed!' 
+        ? 'AUG Codon found! Protein synthesis initiated. Step 1 Simulation completed!' 
         : 'Cell integrity depleted. Try again to repair the DNA!';
 
       const actions = $('ov-actions');
       if (win) {
         actions.innerHTML = `
-          <a href="training.html" class="ov-next-btn">NEXT STEP: INDUSTRY TRAINING &rarr;</a>
+          <a href="nucleus.html" class="ov-next-btn">NEXT: DISCOVER YOUR ROLE &rarr;</a>
           <button class="cr-btn" id="start-btn" type="button">REPLAY SIMULATION</button>
         `;
         document.getElementById('start-btn').addEventListener('click', start);
@@ -397,7 +391,6 @@
       parts.forEach(p => { ctx.globalAlpha = p.life / 24; ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 4, 4); });
       ctx.globalAlpha = 1;
       
-      // Cannon lifted well above the bottom border so it is fully visible
       const py = H - player.yBottomOffset;
       ctx.fillStyle = '#4deeea'; 
       ctx.fillRect(player.x - 5, py - 20, 10, 20);
@@ -429,7 +422,6 @@
     document.getElementById('start-btn').addEventListener('click', start);
     const isTyping = e => { const t = e.target; return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable); };
     document.addEventListener('keydown', e => {
-      // Don't hijack typing in the lab notebook / Bio-Bot chat (space, A, D, Enter were being swallowed)
       if (isTyping(e)) return;
       keys[e.code] = true;
       if (['ArrowLeft','ArrowRight','Space','KeyA','KeyD'].includes(e.code)) e.preventDefault();

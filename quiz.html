@@ -218,7 +218,7 @@
       <h2 class="outcome-role" id="matched-role-title">FORENSIC DNA ANALYST</h2>
       <p class="outcome-desc" id="matched-role-desc"></p>
       <div class="action-links">
-        <a href="crispr.html" class="pixel-pill-btn"><span class="btn-text">START SIMULATION &rarr;</span></a>
+        <a href="training.html" class="pixel-pill-btn"><span class="btn-text">NEXT: INDUSTRY TRAINING &rarr;</span></a>
         <a href="index.html" class="pixel-pill-btn"><span class="btn-text">RETURN TO LADDER</span></a>
         <button type="button" class="pixel-pill-btn" id="retake-btn"><span class="btn-text">RETAKE QUIZ</span></button>
       </div>
@@ -311,7 +311,7 @@
 
     let curQ = 0;
     const votes = {};
-    let firstPick = null; // first answer breaks ties
+    let firstPick = null;
 
     function renderQuestion() {
       const q = QUIZ_QUESTIONS[curQ];
@@ -370,7 +370,7 @@
       showResult(matchedRole);
 
       if (window.setBioGuideSpeech) {
-        setBioGuideSpeech(`Outstanding diagnostic work! Codon decoded: ${matchedRole}! Now let's enter the lab—click below to begin the CRISPR simulation!`);
+        setBioGuideSpeech(`Outstanding diagnostic work! Codon decoded: ${matchedRole}! Now let's train those soft skills—click below to begin Industry Training!`);
       }
     }
 
@@ -390,8 +390,8 @@
     }
 
     document.getElementById('retake-btn').addEventListener('click', () => {
-      if (!confirm('Retaking the quiz will also reset your simulation and training progress. Continue?')) return;
-      ['biotech_matched_role', 'biotech_sim_complete', 'biotech_training_complete', 'biotech_training_answers']
+      if (!confirm('Retaking the quiz will reset your matched role and training progress, but will keep your simulation complete. Continue?')) return;
+      ['biotech_matched_role', 'biotech_training_complete', 'biotech_training_answers']
         .forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
       location.reload();
     });

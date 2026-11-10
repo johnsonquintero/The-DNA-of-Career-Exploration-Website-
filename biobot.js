@@ -23,7 +23,6 @@ function initBioBot() {
 
   /* ---------------- CSS ---------------- */
   const css = `
-    /* Robot speech bubble */
     .bio-guide-hud{position:relative;margin:0 auto .8rem;z-index:50;display:flex;align-items:center;gap:14px;
       background:rgba(10,16,42,.97);border:2px solid var(--cyan-primary,#4deeea);border-radius:24px;padding:10px 18px;
       box-shadow:0 0 22px rgba(77,238,234,.4);cursor:pointer;max-width:560px;width:min(100%,560px);color:#fff;text-align:left;font:inherit;
@@ -152,7 +151,7 @@ function initBioBot() {
   `;
 
   const navCluster = document.querySelector('.nav-cluster');
-  if (navCluster && !/quiz|crispr|training/.test(pagePath)) navCluster.insertAdjacentHTML('beforebegin', markup);
+  if (navCluster && !/quiz|crispr|nucleus|ladder|training/.test(pagePath)) navCluster.insertAdjacentHTML('beforebegin', markup);
   else document.body.insertAdjacentHTML('beforeend', markup);
 
   const chatWin = document.getElementById('chat-window');
@@ -208,7 +207,7 @@ function initBioBot() {
   guideHud.addEventListener('click', toggleBioBot);
   document.getElementById('chat-close-btn').addEventListener('click', closeBioBot);
 
-  // Footer BIO-BOT button on EVERY page (.action-btn on index/training, .cr-btn on quiz/crispr)
+  // Footer BIO-BOT button on EVERY page (.action-btn on index/training, .cr-btn on quiz/crispr/nucleus/ladder)
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.action-btn, .cr-btn');
     if (btn && !chatWin.contains(btn) && /BIO-BOT/i.test(btn.textContent)) {
@@ -365,22 +364,27 @@ function initBioBot() {
 
   /* ---------------- PAGE GREETINGS ---------------- */
   const say = (t, d) => setTimeout(() => window.setBioGuideSpeech(t), d || 250);
-  if (pagePath.includes('quiz')) {
+  
+  if (pagePath.includes('crispr')) {
+    say('This is Step 1! Target sequence A-U-G-A-G-A in order! Explore the cell repair simulation!');
+  } else if (pagePath.includes('nucleus')) {
+    say('Click the nucleus to zoom in and discover your career path!');
+  } else if (pagePath.includes('ladder')) {
+    say('You zoomed in! Click the center rung to start Step 2: The Amino Acid Quiz!');
+  } else if (pagePath.includes('quiz')) {
     setTimeout(() => {
       const heading = document.getElementById('stage-heading');
       if (savedRole && heading) heading.textContent = 'MATCH RESULT';
       window.setBioGuideSpeech(savedRole
-        ? `Welcome back! You are matched as: ${savedRole}. Ready for your simulation?`
-        : 'Welcome to the Amino Acid Quiz! Answer honestly to discover your role.');
+        ? `Welcome back! You are matched as: ${savedRole}. Ready for training?`
+        : 'Welcome to Step 2! Answer honestly to discover your biotech role.');
     }, 250);
-  } else if (pagePath.includes('crispr')) {
-    say('Target sequence A-U-G-A-G-A in order! Explore the cell repair simulation!');
   } else if (pagePath.includes('training')) {
     say('Welcome to Industry Training! Practice your soft skills and earn experience.');
   } else {
     say(savedRole
-      ? `Welcome back! Your matched role is: ${savedRole}. Step 2 is unlocked!`
-      : "Hello! I'm BIO-BOT 9000! Click me to chat or take the Amino Acid Quiz to discover your role.", 350);
+      ? `Welcome back! Your matched role is: ${savedRole}. Step 3 is next!`
+      : "Hello! I'm BIO-BOT 9000! Start with the CRISPR simulation to unlock your path.", 350);
   }
 }
 

@@ -25,11 +25,14 @@
     <nav class="nav-cluster" id="main-nav-cluster">
       <div class="nav-row row-top" id="nav-row-top">
         <button class="pixel-pill-btn nav-optional btn-locked" id="btn-overview" type="button"><span class="btn-text">OVERVIEW</span></button>
-        <!-- Step 1 -->
-        <a href="quiz.html" class="pixel-pill-btn solo-quiz-glow" id="btn-quiz"><span class="btn-text">AMINO ACID QUIZ</span></a>
-        <!-- Step 2 (the game) -->
-        <a href="crispr.html" class="pixel-pill-btn multi-line nav-optional btn-locked" id="btn-sim"><span class="btn-text">SIMULATION &amp;<br>DILT</span></a>
+        
+        <!-- Step 1 (Now the Simulation) -->
+        <a href="crispr.html" class="pixel-pill-btn solo-quiz-glow nav-optional btn-locked" id="btn-sim"><span class="btn-text">CRISPR SIMULATION</span></a>
+        
+        <!-- Step 2 (Now the Quiz, routed through the nucleus/ladder sequence) -->
+        <a href="nucleus.html" class="pixel-pill-btn multi-line nav-optional btn-locked" id="btn-quiz"><span class="btn-text">AMINO ACID<br>QUIZ</span></a>
       </div>
+      
       <div class="nav-row row-bottom btn-locked" id="nav-row-bottom">
         <!-- Step 3 -->
         <a href="training.html" class="pixel-pill-btn multi-line nav-optional btn-locked" id="btn-training"><span class="btn-text">INDUSTRY<br>TRAINING</span></a>
@@ -112,8 +115,8 @@
 
   <script>
     /* =========================================================
-       LADDER PROGRESSION: Quiz -> Simulation (game) -> Training -> Certificate
-       Only the NEXT step is shown and glowing; finished steps are dimmed.
+       LADDER PROGRESSION (NEW ORDER):
+       CRISPR Sim -> Nucleus/Ladder -> Amino Acid Quiz -> Training -> Cert
        ========================================================= */
     (function checkLadderProgress() {
       const get = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -135,7 +138,7 @@
       const certBtn = el('btn-cert');
       const rowBottom = el('nav-row-bottom');
       const setExp = (p) => { const f = el('exp-fill'); if (f) f.style.width = p + '%'; };
-      setExp(10);
+      setExp(5);
 
       const show = (b) => b && b.classList.remove('btn-locked');
       const glow = (b) => b && b.classList.add('solo-quiz-glow');
@@ -146,34 +149,39 @@
         if (label) b.querySelector('.btn-text').textContent = label;
       };
 
-      if (!matchedRole) {
-        glow(quizBtn);                       // Step 1
-        return;
-      }
-
-      el('current-role').textContent = matchedRole.toUpperCase();
-      setExp(35);
-      done(quizBtn, 'QUIZ ✓');
+      /* STEP 1: CRISPR SIMULATION */
       show(simBtn);
-
       if (!simDone) {
-        glow(simBtn);                        // Step 2: the game
+        glow(simBtn);                        // Step 1 is active
+        if (quizBtn) quizBtn.classList.add('btn-locked');
         return;
       }
 
       done(simBtn);
-      setExp(trainingDone ? 100 : 60);
-      simBtn.querySelector('.btn-text').innerHTML = 'SIMULATION ✓';
+      if (simBtn) simBtn.querySelector('.btn-text').innerHTML = 'SIMULATION ✓';
+      setExp(25);
+
+      /* STEP 2: QUIZ (unlocked after sim, routes through nucleus.html) */
+      show(quizBtn);
+      if (!matchedRole) {
+        glow(quizBtn);                        // Step 2 is active
+        return;
+      }
+
+      done(quizBtn, 'QUIZ ✓');
+      setExp(55);
       show(rowBottom); show(trainBtn);
 
+      /* STEP 3: TRAINING */
       if (!trainingDone) {
-        glow(trainBtn);                      // Step 3
+        glow(trainBtn);                      // Step 3 is active
         return;
       }
 
       done(trainBtn);
       trainBtn.querySelector('.btn-text').innerHTML = 'TRAINING ✓';
-      show(certBtn); glow(certBtn);          // Step 4
+      setExp(100);
+      show(certBtn); glow(certBtn);          // Step 4 is active
     })();
   </script>
 

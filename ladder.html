@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNA Rungs | The DNA of Career Exploration</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .lad-stage {
+      position: relative; z-index: 20; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; width: 100%; max-width: 850px;
+      flex: 1; min-height: 0; gap: 0.5rem;
+    }
+    .rungs-container {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      width: 100%; margin-top: 2rem;
+    }
+    .rung-row {
+      display: flex; align-items: center; width: var(--rw, 90%);
+      height: 32px; position: relative; transition: transform 0.5s cubic-bezier(0.6, 0, 0.4, 1), opacity 0.5s ease;
+    }
+    .rung-node {
+      width: 24px; height: 24px; border-radius: 50%; flex: none;
+      transition: all 0.3s ease; border: 2px solid transparent;
+    }
+    /* Default dim colors matching your image */
+    .rung-node.left { background: #4a2260; } 
+    .rung-node.right { background: #1e3a6e; } 
+    
+    .rung-bar {
+      flex: 1; height: 6px; background: #4a4f66; margin: 0 4px;
+      border-radius: 4px; position: relative; transition: all 0.3s ease;
+    }
+    
+    /* The active/clickable center rung */
+    .rung-row.active {
+      height: 50px; z-index: 5;
+    }
+    .rung-row.active .rung-node.left { background: var(--pink-exp); border-color: #fff; box-shadow: 0 0 18px var(--pink-exp); width: 40px; height: 40px; }
+    .rung-row.active .rung-node.right { background: var(--cyan-primary); border-color: #fff; box-shadow: 0 0 18px var(--cyan-primary); width: 40px; height: 40px; }
+    .rung-row.active .rung-bar {
+      background: #a0b8e0; height: 10px; box-shadow: 0 0 12px rgba(160,184,224,0.5);
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* The button over the active rung */
+    .rung-btn {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      background: #0b0f27; border: 2px solid var(--cyan-primary); color: #fff;
+      font-family: var(--font-retro); font-size: 0.55rem; letter-spacing: 1px;
+      padding: 8px 16px; border-radius: 30px; cursor: pointer;
+      white-space: nowrap; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      transition: all 0.2s ease; z-index: 10;
+    }
+    .rung-btn:hover, .rung-btn:focus-visible {
+      background: var(--cyan-primary); color: #0b0f27; transform: translate(-50%, -50%) scale(1.05);
+      box-shadow: 0 0 25px var(--cyan-primary); outline: none;
+    }
+    
+    /* Fade out animation classes */
+    .rung-row.zoomed { transform: scale(4); opacity: 0; }
+    .zoom-transition {
+      position: fixed; inset: 0; background: #040714; z-index: 9999;
+      opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+    }
+    .zoom-transition.on { opacity: 1; pointer-events: auto; }
+    @media (prefers-reduced-motion: reduce) {
+      .rung-row, .zoom-transition, .rung-btn { transition: none !important; }
+    }
+  </style>
+</head>
+<body class="crispr-page">
+  <div class="scanlines"></div>
+  <canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+  <canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+  <main class="lad-stage">
+    <h1 class="cr-title" style="margin-bottom: -1rem;">DNA</h1>
+    <p style="font-family: var(--font-retro); font-size: 0.6rem; color: #5b83b8; letter-spacing: 2px;">(10,200X)</p>
+    
+    <div class="rungs-container" id="rungs-container">
+      <!-- Top half: Dimmed rungs -->
+      <div class="rung-row" style="--rw: 40%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+      <div class="rung-row" style="--rw: 65%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+      <div class="rung-row" style="--rw: 85%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+      
+      <!-- Active Center Rung -->
+      <div class="rung-row active" style="--rw: 100%;" id="active-rung">
+        <div class="rung-node left"></div>
+        <div class="rung-bar">
+          <button class="rung-btn" id="quiz-btn" type="button">STEP 1: AMINO ACID QUIZ</button>
+        </div>
+        <div class="rung-node right"></div>
+      </div>
+      
+      <!-- Bottom half: Dimmed rungs -->
+      <div class="rung-row" style="--rw: 85%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+      <div class="rung-row" style="--rw: 65%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+      <div class="rung-row" style="--rw: 40%;"><div class="rung-node left"></div><div class="rung-bar"></div><div class="rung-node right"></div></div>
+    </div>
+  </main>
+
+  <footer class="cr-bar">
+    <div class="role-display-pill">
+      <span class="role-label">ROLE:</span>
+      <span class="role-value" id="current-role">TAKE THE QUIZ TO MATCH YOUR JOB!</span>
+    </div>
+    <div class="cr-exp">
+      <div class="cr-exp-track">
+        <div class="cr-exp-fill" id="exp-fill" style="width: 35%;"></div>
+        <span class="cr-exp-label">STEP 2 OF 4</span>
+      </div>
+    </div>
+    <div class="cr-actions">
+      <a href="index.html" class="cr-btn"><span>🚪</span> PORTAL</a>
+      <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+      <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+    </div>
+  </footer>
+
+  <div class="zoom-transition" id="zoom-transition"></div>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('quiz-btn');
+      const row = document.getElementById('active-rung');
+      const fade = document.getElementById('zoom-transition');
+      let zooming = false;
+
+      function goZoom() {
+        if (zooming) return;
+        zooming = true;
+        row.classList.add('zoomed');
+        fade.classList.add('on');
+        setTimeout(() => { location.href = 'quiz.html'; }, 600);
+      }
+
+      btn.addEventListener('click', goZoom);
+    })();
+  </script>
+
+  <script src="helix.js"></script>
+  <script src="labnotebook.js"></script>
+  <script src="biobot.js"></script>
+</body>
+</html>

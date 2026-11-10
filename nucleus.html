@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nucleus | The DNA of Career Exploration</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .nuc-stage {
+      position: relative; z-index: 20; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; width: 100%; flex: 1;
+      min-height: 0; cursor: zoom-in; user-select: none; padding-top: 1rem;
+    }
+    .nuc-title { margin-bottom: 2rem; z-index: 2; text-align: center; }
+    
+    .nuc-visual {
+      position: relative; width: clamp(340px, 55vh, 520px); aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      animation: nucPulse 3s ease-in-out infinite; transition: transform 0.6s cubic-bezier(0.6, 0, 0.4, 1), opacity 0.6s ease;
+    }
+    .nuc-visual.zoomed { transform: scale(4); opacity: 0; }
+    .nuc-ring-outer {
+      position: absolute; inset: 0; border: 3.5px solid var(--cyan-primary);
+      border-radius: 50%; box-shadow: 0 0 25px var(--cyan-glow), inset 0 0 15px var(--cyan-glow);
+    }
+    .nuc-ring-inner {
+      position: absolute; width: 55%; height: 55%; border: 3.5px solid var(--pink-exp);
+      border-radius: 50%; box-shadow: 0 0 20px var(--pink-glow), inset 0 0 10px var(--pink-glow);
+    }
+    .nuc-dna { width: 50%; height: 50%; stroke: #fff; stroke-width: 3; fill: none; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(255,255,255,0.8)); }
+    
+    .nuc-cta {
+      margin-top: 2rem; font-family: var(--font-retro); font-size: 0.75rem;
+      letter-spacing: 2px; color: var(--cyan-primary); text-shadow: 0 0 10px var(--cyan-glow);
+      animation: blinkCursor 1.2s infinite alternate; transition: opacity 0.3s;
+    }
+    .zoom-transition {
+      position: fixed; inset: 0; background: #040714; z-index: 9999;
+      opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+    }
+    .zoom-transition.on { opacity: 1; pointer-events: auto; }
+    
+    @keyframes nucPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+    @media (prefers-reduced-motion: reduce) {
+      .nuc-visual, .nuc-cta { animation: none !important; }
+      .nuc-visual, .zoom-transition { transition: none !important; }
+    }
+  </style>
+</head>
+<body class="crispr-page">
+  <div class="scanlines"></div>
+  <canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+  <canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+  <main class="nuc-stage" id="nuc-stage" role="button" tabindex="0" aria-label="Click to zoom into the DNA strands">
+    <div class="nuc-title">
+      <h1 class="cr-title" style="font-size: 2rem; margin-bottom: 0.5rem;">NUCLEUS</h1>
+      <p style="font-family: var(--font-retro); font-size: 0.8rem; color: #5b83b8; letter-spacing: 2px;">(100X)</p>
+    </div>
+    
+    <div class="nuc-visual" id="nuc-visual">
+      <div class="nuc-ring-outer"></div>
+      <div class="nuc-ring-inner"></div>
+      <!-- Abstract tangled DNA visual recreating your screenshot -->
+      <svg class="nuc-dna" viewBox="0 0 100 100">
+        <path d="M20,70 L30,40 L50,50 L40,80 L60,60 L80,30 M30,40 L10,60 M50,50 L70,80 L80,30 M40,80 L60,90 M60,60 L80,80" />
+        <path d="M30,40 L50,20 L70,40 L80,30" stroke-width="1.5" />
+        <path d="M40,80 L60,90 L80,80" stroke-width="1.5" />
+        <path d="M20,70 L40,80" stroke-width="1.5" />
+      </svg>
+    </div>
+    
+    <p class="nuc-cta" id="nuc-cta">CLICK TO ZOOM IN &rarr;</p>
+  </main>
+
+  <footer class="cr-bar">
+    <div class="role-display-pill">
+      <span class="role-label">ROLE:</span>
+      <span class="role-value" id="current-role">TAKE THE QUIZ TO MATCH YOUR JOB!</span>
+    </div>
+    <div class="cr-exp">
+      <div class="cr-exp-track">
+        <div class="cr-exp-fill" id="exp-fill" style="width: 25%;"></div>
+        <span class="cr-exp-label">STEP 2 OF 4</span>
+      </div>
+    </div>
+    <div class="cr-actions">
+      <a href="index.html" class="cr-btn"><span>🚪</span> PORTAL</a>
+      <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+      <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+    </div>
+  </footer>
+
+  <div class="zoom-transition" id="zoom-transition"></div>
+
+  <script>
+    (function () {
+      const stage = document.getElementById('nuc-stage');
+      const visual = document.getElementById('nuc-visual');
+      const cta = document.getElementById('nuc-cta');
+      const fade = document.getElementById('zoom-transition');
+      let zooming = false;
+
+      function goZoom() {
+        if (zooming) return;
+        zooming = true;
+        cta.style.opacity = '0';
+        visual.classList.add('zoomed');
+        fade.classList.add('on');
+        // Now this goes to ladder.html (the second image), NOT the quiz directly
+        setTimeout(() => { location.href = 'ladder.html'; }, 600);
+      }
+
+      stage.addEventListener('click', goZoom);
+      stage.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goZoom(); }
+      });
+    })();
+  </script>
+
+  <script src="helix.js"></script>
+  <script src="labnotebook.js"></script>
+  <script src="biobot.js"></script>
+</body>
+</html>
