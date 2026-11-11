@@ -35,6 +35,7 @@
       
       <div class="nav-row row-bottom btn-locked" id="nav-row-bottom">
         <!-- Step 3 -->
+        <a href="steps.html?step=2" class="pixel-pill-btn multi-line nav-optional btn-locked" id="btn-jobsim"><span class="btn-text">DAY IN<br>THE LIFE</span></a>
         <a href="training.html" class="pixel-pill-btn multi-line nav-optional btn-locked" id="btn-training"><span class="btn-text">INDUSTRY<br>TRAINING</span></a>
         <!-- Step 4 -->
         <a href="training.html#cert" class="pixel-pill-btn nav-optional btn-locked" id="btn-cert"><span class="btn-text">CERTIFICATION</span></a>
@@ -122,19 +123,21 @@
       const get = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
       // Presenter shortcut: open index.html?reset to clear saved progress before a demo.
       if (/[?&]reset\b/.test(location.search)) {
-        ['biotech_matched_role', 'biotech_sim_complete', 'biotech_training_complete', 'biotech_training_answers']
+        ['biotech_matched_role', 'biotech_sim_complete', 'biotech_jobsim_complete', 'biotech_training_complete', 'biotech_training_answers']
           .forEach((k) => { try { localStorage.removeItem(k); } catch (e) {} });
         history.replaceState(null, '', location.pathname);
       }
 
       const matchedRole = get('biotech_matched_role');
       const simDone = get('biotech_sim_complete') === 'true';
+      const jobsimDone = get('biotech_jobsim_complete') === 'true';
       const trainingDone = get('biotech_training_complete') === '1';
 
       const el = (id) => document.getElementById(id);
       const quizBtn = el('btn-quiz');
       const simBtn = el('btn-sim');
       const trainBtn = el('btn-training');
+      const jobsimBtn = el('btn-jobsim');
       const certBtn = el('btn-cert');
       const rowBottom = el('nav-row-bottom');
       const setExp = (p) => { const f = el('exp-fill'); if (f) f.style.width = p + '%'; };
@@ -170,9 +173,19 @@
 
       done(quizBtn, 'QUIZ ✓');
       setExp(55);
-      show(rowBottom); show(trainBtn);
+      show(rowBottom); show(jobsimBtn);
 
-      /* STEP 3: TRAINING */
+      /* STEP 2 (slides): DAY IN THE LIFE = career profile + simulations */
+      if (!jobsimDone) {
+        glow(jobsimBtn);                     // Day in the Life is active
+        return;
+      }
+      done(jobsimBtn);
+      jobsimBtn.querySelector('.btn-text').innerHTML = 'DAY IN LIFE ✓';
+      setExp(75);
+      show(trainBtn);
+
+      /* STEP 4: TRAINING */
       if (!trainingDone) {
         glow(trainBtn);                      // Step 3 is active
         return;
@@ -181,7 +194,7 @@
       done(trainBtn);
       trainBtn.querySelector('.btn-text').innerHTML = 'TRAINING ✓';
       setExp(100);
-      show(certBtn); glow(certBtn);          // Step 4 is active
+      show(certBtn); glow(certBtn);          // Step 5 is active
     })();
   </script>
 

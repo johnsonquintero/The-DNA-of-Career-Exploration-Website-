@@ -218,7 +218,7 @@
       <h2 class="outcome-role" id="matched-role-title">FORENSIC DNA ANALYST</h2>
       <p class="outcome-desc" id="matched-role-desc"></p>
       <div class="action-links">
-        <a href="training.html" class="pixel-pill-btn"><span class="btn-text">NEXT: INDUSTRY TRAINING &rarr;</span></a>
+        <a href="steps.html?step=2" class="pixel-pill-btn"><span class="btn-text">NEXT: DAY IN THE LIFE &rarr;</span></a>
         <a href="index.html" class="pixel-pill-btn"><span class="btn-text">RETURN TO LADDER</span></a>
         <button type="button" class="pixel-pill-btn" id="retake-btn"><span class="btn-text">RETAKE QUIZ</span></button>
       </div>
@@ -370,7 +370,7 @@
       showResult(matchedRole);
 
       if (window.setBioGuideSpeech) {
-        setBioGuideSpeech(`Outstanding diagnostic work! Codon decoded: ${matchedRole}! Now let's train those soft skills—click below to begin Industry Training!`);
+        setBioGuideSpeech(`Outstanding diagnostic work! Codon decoded: ${matchedRole}! Now let's see what this job is really like—click below for your Day in the Life!`);
       }
     }
 
@@ -391,7 +391,7 @@
 
     document.getElementById('retake-btn').addEventListener('click', () => {
       if (!confirm('Retaking the quiz will reset your matched role and training progress, but will keep your simulation complete. Continue?')) return;
-      ['biotech_matched_role', 'biotech_training_complete', 'biotech_training_answers']
+      ['biotech_matched_role', 'biotech_jobsim_complete', 'biotech_training_complete', 'biotech_training_answers']
         .forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
       location.reload();
     });

@@ -159,7 +159,7 @@
   function renderStep(n) {
     const isFour = n === 4;
     setHead('DNA', '(10,200X)');
-    show(`${ladder(isFour ? 3 : 0, isFour ? 'STEP 4: INDUSTRY TRAINING' : 'STEP 5: CERTIFICATION')}
+    show(`${ladder(isFour ? 3 : 0, isFour ? 'STEP 3: INDUSTRY TRAINING' : 'STEP 4: CERTIFICATION')}
       <p class="hint">${isFour ? 'Zoom in to the molecular level to practice the soft skills every lab team relies on.' : 'You have completed every training task. Zoom in to claim your certificate.'}</p>
       <div class="tr-row"><a class="tr-btn" href="index.html">HOME</a><button class="tr-btn" id="go" type="button">${isFour ? 'START TRAINING' : 'CLAIM CERTIFICATE'}</button></div>`);
     $('#go').onclick = next;

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Day in the Life | The DNA of Career Exploration</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  .dl-stage{position:relative;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:900px;flex:1;min-height:0;gap:.5rem;padding:0 1rem;overflow-y:auto}
+  .dl-title{font-size:clamp(1rem,1.6vw,1.6rem);letter-spacing:2px;color:var(--cyan-primary);text-shadow:0 0 10px var(--cyan-glow);text-align:center}
+  .dl-sub{font-size:.65rem;letter-spacing:2px;color:#5b83b8}
+  .dl-card{width:100%;background:#1e3a6e;border-radius:34px;padding:1.1rem 1.4rem 1.2rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;box-shadow:0 10px 40px rgba(0,0,0,.8)}
+  .dl-card h2{font-family:var(--font-body);font-weight:700;font-size:1.25rem;color:#4fb0cf}
+  .dl-card .d{font-family:var(--font-body);font-size:.95rem;color:#4fb0cf;text-align:center;max-width:640px}
+  .dl-text{font-family:var(--font-body);font-weight:700;font-size:clamp(.9rem,1.05vw,1.1rem);line-height:1.7;color:#e6eefc;text-align:center;padding:.8rem .6rem}
+  .frame{width:100%;background:#03040f;border:2px solid #fff;border-radius:24px;position:relative}
+  .dl-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+  .dl-btn{background:#000;border:2px solid #fff;border-radius:30px;color:#4fb0cf;font-family:var(--font-retro);font-size:.6rem;letter-spacing:1.5px;padding:.8rem 1.6rem;cursor:pointer;text-decoration:none;transition:all .2s}
+  .dl-btn:hover:not(:disabled){background:#4fb0cf;color:#03040f;transform:translateY(-2px)}
+  .dl-btn:disabled{opacity:.4;cursor:default}
+  .dl-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .fb{font-family:var(--font-body);font-weight:700;font-size:1rem;min-height:1.4em;text-align:center;max-width:680px;color:#9be06a}
+  .fb.bad{color:#ff8a96}.fb.warn{color:#ffd166}
+  /* gel */
+  .gel{height:clamp(200px,34vh,250px);display:flex;justify-content:center;gap:clamp(1rem,4vw,3rem)}
+  .lane{position:relative;width:clamp(100px,16vw,140px);height:100%}
+  .lane .tag{position:absolute;top:12px;left:0;right:0;background:#c8d0dc;color:#1b2540;font-family:var(--font-retro);font-size:.5rem;text-align:center;padding:5px 0;letter-spacing:1px}
+  .lane i{position:absolute;left:0;right:0;height:12px}
+  /* centrifuge */
+  .rotor{position:relative;width:clamp(230px,36vh,300px);aspect-ratio:1;border-radius:50%;background:#555;border:3px solid #fff;margin:.2rem auto}
+  .slot{position:absolute;width:23%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#383838;border:0;cursor:pointer}
+  .slot:hover{background:#4a4a4a}.slot:focus-visible{outline:3px solid var(--cyan-primary)}
+  .slot.on{box-shadow:inset 0 0 0 5px #2b2b2b}
+  .slot::after{content:'';position:absolute;inset:16%;border-radius:50%;background:#c8d0dc;display:none}
+  .slot.on::after{display:block}
+  .rotor.spin{animation:rot .3s linear infinite}.rotor.shake{animation:shk .3s}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  /* pcr */
+  .pcr{display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1.1rem 1.3rem;align-items:center}
+  .steps div{font-family:var(--font-retro);font-size:.58rem;line-height:1.9;letter-spacing:1px;margin-bottom:.9rem;color:#8a97b0}
+  .steps div.cur{color:#fff}.steps div.done{color:#9be06a}
+  .tmp{text-align:center}.tmp .lbl{font-family:var(--font-retro);font-size:.6rem;letter-spacing:1px;color:#fff}
+  .tmp .val{font-family:var(--font-retro);font-size:clamp(1.4rem,2.6vw,2.2rem);color:#fff;margin:.8rem 0}
+  .ctl{display:flex;gap:1.2rem;justify-content:center}
+  .ctl div{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.55rem;color:#cfd8ea;font-family:var(--font-body)}
+  .ctl button{width:34px;height:30px;background:#4fb0cf;border:0;cursor:pointer;clip-path:polygon(50% 0,100% 100%,0 100%)}
+  .ctl button.dn{clip-path:polygon(0 0,100% 0,50% 100%)}
+  .ctl button:hover{background:#fff}.ctl button:focus-visible{outline:2px solid #fff}
+  @media (max-width:700px){.pcr{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){.rotor.spin,.rotor.shake{animation:none}}
+</style>
+</head>
+<body class="crispr-page">
+<div class="scanlines"></div>
+<canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+<canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+<main class="dl-stage">
+  <h1 class="dl-title" id="title">DAY IN THE LIFE</h1>
+  <p class="dl-sub">(10,000,000X)</p>
+  <section class="dl-card" id="card" aria-live="polite"></section>
+</main>
+
+<footer class="cr-bar">
+  <div class="role-display-pill"><span class="role-label">ROLE:</span><span class="role-value" id="current-role">DNA ANALYST</span></div>
+  <div class="cr-exp"><div class="cr-exp-track"><div class="cr-exp-fill" id="exp-fill" style="width:62%"></div><span class="cr-exp-label">EXP</span></div></div>
+  <div class="cr-actions">
+    <a href="index.html" class="cr-btn"><span>🚪</span> EXIT SIM</a>
+    <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+    <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const sg = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const ss = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const saved = sg('biotech_matched_role');
+  if (saved && saved !== 'DNA Analyst') { location.replace('jobsim.html'); return; }
+  const card = $('#card'), title = $('#title');
+  const setExp = (p) => { $('#exp-fill').style.width = p + '%'; };
+  const fb = (m, c) => { const e = $('#fb'); e.textContent = m || ''; e.className = 'fb ' + (c || ''); };
+  const DET = 'DAY IN THE LIFE - DETECTION';
+
+  /* ---- 1. Day in the life (text) ---- */
+  function intro() {
+    title.textContent = 'DAY IN THE LIFE';
+    card.innerHTML = `<p class="dl-text">Forensic DNA analysis relies on comparing specific regions of non-coding DNA called Short Tandem Repeats (STRs), which vary in length from person to person. To analyze a sample, analysts first break open cells through heat lysis at 56\u00B0C and spin them in a centrifuge to separate pure DNA from cellular debris. Next, Polymerase Chain Reaction (PCR) uses a three-step thermal cycle\u2014denaturation at 95\u00B0C, primer annealing at 55\u00B0C, and extension at 72\u00B0C\u2014to make millions of copies of those target sequences.</p>
+      <div class="dl-row"><button class="dl-btn" id="n" type="button">CONTINUE &rarr;</button></div>`;
+    $('#n').onclick = gel;
+  }
+
+  /* ---- 2. Forensics Gel Analysis ---- */
+  function gel() {
+    title.textContent = DET; setExp(68);
+    const lane = (n, c, b) => `<div class="lane"><span class="tag">${n}</span>${b.map((y) => `<i style="top:${y}%;background:${c}"></i>`).join('')}</div>`;
+    card.innerHTML = `<h2>Forensics Gel Analysis</h2><p class="d">Compare Crime Scene DNA band distance against Suspect A and Suspect B.</p>
+      <div class="frame gel">${lane('CRIME', '#4fb0cf', [31, 47])}${lane('SUSP. A', '#8fd16a', [23, 47, 74])}${lane('SUSP. B', '#4fb0cf', [31, 47])}</div>
+      <div class="dl-row"><button class="dl-btn" data-s="A" type="button">MATCH SUSPECT A</button><button class="dl-btn" data-s="B" type="button">MATCH SUSPECT B</button></div><div class="fb" id="fb"></div>`;
+    card.querySelectorAll('[data-s]').forEach((b) => b.onclick = () => {
+      if (b.dataset.s === 'B') {
+        card.querySelectorAll('[data-s]').forEach((x) => x.disabled = true);
+        fb('Match! Suspect B\u2019s bands line up with the crime scene sample.');
+        setTimeout(centrifuge, 1200);
+      } else fb('Not a match. Suspect A has an extra band and the positions differ.', 'bad');
+    });
+  }
+
+  /* ---- 3. Centrifuge Balancing ---- */
+  function centrifuge() {
+    title.textContent = DET; setExp(76);
+    const on = new Set([0, 3, 4]);
+    let busy = false;
+    const slots = [...Array(8).keys()].map((i) => {
+      const a = i * Math.PI / 4;
+      return `<button type="button" class="slot${on.has(i) ? ' on' : ''}" data-i="${i}" style="left:${50 + 34 * Math.sin(a)}%;top:${50 - 34 * Math.cos(a)}%" aria-label="Rotor slot ${i + 1}"></button>`;
+    }).join('');
+    card.innerHTML = `<h2>Centrifuge Balancing</h2><p class="d">Arrange the samples so that the centrifuge has a balanced mass.</p>
+      <div class="rotor" id="rotor">${slots}</div>
+      <div class="dl-row"><button class="dl-btn" id="run" type="button">RUN (14,000 RPM)</button></div><div class="fb" id="fb"></div>`;
+    card.querySelectorAll('.slot').forEach((s) => s.onclick = () => {
+      if (busy) return;
+      const i = +s.dataset.i; on.has(i) ? on.delete(i) : on.add(i); s.classList.toggle('on');
+    });
+    $('#run').onclick = () => {
+      if (busy) return;
+      if (on.size < 2) return fb('Load at least two samples before running.', 'warn');
+      let x = 0, y = 0; on.forEach((i) => { x += Math.sin(i * Math.PI / 4); y += Math.cos(i * Math.PI / 4); });
+      const rotor = $('#rotor');
+      if (Math.hypot(x, y) > 1e-6) {
+        rotor.classList.remove('shake'); void rotor.offsetWidth; rotor.classList.add('shake');
+        return fb('Unbalanced! Every sample needs a matching sample directly across the rotor, or it will wobble and break.', 'bad');
+      }
+      busy = true; rotor.classList.add('spin'); fb('Balanced. Spinning at 14,000 RPM...');
+      setTimeout(() => { rotor.classList.remove('spin'); fb('Run complete. DNA separated from cellular debris.'); setTimeout(pcr, 1000); }, 1700);
+    };
+  }
+
+  /* ---- 4. PCR ---- */
+  function pcr() {
+    title.textContent = DET; setExp(84);
+    const S = [['1.DENATURATION', 95], ['2.ANNEALING', 55], ['3.ELONGATION', 72]];
+    let t = 20, st = 0, cy = 0;
+    card.innerHTML = `<h2>PCR</h2><p class="d">Modify the temperature (repeat 3 times) to successfully run a Polymerase Chain Reaction.</p>
+      <div class="frame pcr"><div class="steps" id="steps"></div>
+      <div class="tmp"><div class="lbl">TEMPERATURE</div><div class="val" id="val"></div>
+        <div class="ctl">${[1, 10].map((n) => `<div>+${n}<button type="button" data-d="${n}" aria-label="Plus ${n}"></button><button type="button" class="dn" data-d="-${n}" aria-label="Minus ${n}"></button>-${n}</div>`).join('')}</div>
+        <div class="lbl" id="cyc" style="margin-top:.8rem;color:#8edddb"></div></div></div>
+      <div class="dl-row"><button class="dl-btn" id="ok" type="button">COMPLETE</button></div><div class="fb" id="fb"></div>`;
+    const paint = () => {
+      $('#steps').innerHTML = S.map((s, i) => `<div class="${i < st ? 'done' : i === st ? 'cur' : ''}">${s[0]}<br>TARGET TEMP: ${s[1]}\u00B0C</div>`).join('');
+      $('#val').textContent = t + '\u00B0C';
+      $('#cyc').textContent = 'CYCLE ' + (cy + 1) + ' OF 3';
+    };
+    card.querySelectorAll('[data-d]').forEach((b) => b.onclick = () => { t = Math.max(0, Math.min(100, t + +b.dataset.d)); paint(); });
+    $('#ok').onclick = () => {
+      if (t !== S[st][1]) return fb(`Not yet. ${S[st][0].slice(2)} happens at ${S[st][1]}\u00B0C, and the reaction is at ${t}\u00B0C.`, 'bad');
+      st++;
+      if (st === 3) { st = 0; cy++; if (cy === 3) return finish(); fb('Cycle ' + cy + ' complete. The target DNA has doubled. Repeat!'); }
+      else fb('Good. On to the next step.');
+      paint();
+    };
+    paint();
+  }
+
+  function finish() {
+    ss('biotech_jobsim_complete', 'true'); ss('biotech_jobsim_role', 'DNA Analyst'); setExp(100);
+    card.innerHTML = `<h2>PCR COMPLETE!</h2><p class="d">Three cycles done: millions of copies of the STR regions, ready for analysis. That is a day in the life of a DNA Analyst.</p>
+      <div class="dl-row"><a class="dl-btn" href="steps.html?step=3">NEXT: INDUSTRY TRAINING &rarr;</a><button class="dl-btn" id="again" type="button">REPLAY</button></div>`;
+    $('#again').onclick = intro;
+    if (window.setBioGuideSpeech) setBioGuideSpeech('Great work! Next up: Industry Training.');
+  }
+
+  intro();
+})();
+</script>
+<script src="helix.js"></script>
+<script src="labnotebook.js"></script>
+<script src="biobot.js"></script>
+</body>
+</html>

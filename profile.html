@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Career Profile | The DNA of Career Exploration</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  .pf-stage{position:relative;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;flex:1;min-height:0;gap:.6rem}
+  .pf-title{font-size:clamp(1rem,1.6vw,1.6rem);letter-spacing:2px;color:var(--cyan-primary);text-shadow:0 0 10px var(--cyan-glow);text-align:center}
+  .pf-sub{font-size:.65rem;letter-spacing:2px;color:#5b83b8}
+  .pf-circle{width:clamp(380px,62vh,600px);aspect-ratio:1;border-radius:50%;background:#ff66c4;border:5px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(255,82,177,.35)}
+  .pf-in{width:80%;font-family:var(--font-body);font-size:clamp(.78rem,1.55vh,1.05rem);line-height:1.4;color:#fff;text-align:center}
+  .pf-in h2{font-size:inherit;font-weight:800;text-decoration:underline;margin-bottom:.4rem}
+  .pf-in ul{list-style:disc;text-align:left;padding-left:1.1rem}
+  .pf-in li{margin-bottom:.25rem;font-weight:400}.pf-in b{font-weight:800}
+  .pf-nav{display:flex;gap:1rem;align-items:center;justify-content:center;flex-wrap:wrap}
+  .pf-btn{background:#000;border:2.5px solid #fff;border-radius:16px;color:#fff;font-family:var(--font-retro);font-size:.62rem;letter-spacing:1.5px;padding:.8rem 1.3rem;cursor:pointer;text-decoration:none;transition:all .2s}
+  .pf-btn:hover:not(:disabled){background:#fff;color:#000;transform:translateY(-2px)}
+  .pf-btn:disabled{opacity:.35;cursor:not-allowed}
+  .pf-btn.go{border-color:var(--cyan-primary);color:var(--cyan-primary)}
+  .pf-btn.go:hover{background:var(--cyan-primary);color:#071329;box-shadow:0 0 22px var(--cyan-primary)}
+  .pf-dots{font-family:var(--font-retro);font-size:.6rem;color:#8edddb;letter-spacing:2px}
+</style>
+</head>
+<body class="crispr-page">
+<div class="scanlines"></div>
+<canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+<canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+<main class="pf-stage">
+  <h1 class="pf-title" id="title">CAREER PROFILE</h1>
+  <p class="pf-sub">(10,000,000X)</p>
+  <section class="pf-circle" aria-live="polite"><div class="pf-in" id="body"></div></section>
+  <div class="pf-nav">
+    <button class="pf-btn" id="prev" type="button">&larr; PREV</button>
+    <span class="pf-dots" id="dots"></span>
+    <button class="pf-btn" id="next" type="button">NEXT &rarr;</button>
+    <a class="pf-btn go" id="go" href="dilt.html" hidden>NEXT: DAY IN THE LIFE &rarr;</a>
+  </div>
+</main>
+
+<footer class="cr-bar">
+  <div class="role-display-pill"><span class="role-label">ROLE:</span><span class="role-value" id="current-role">DNA ANALYST</span></div>
+  <div class="cr-exp"><div class="cr-exp-track"><div class="cr-exp-fill" style="width:60%"></div><span class="cr-exp-label">EXP</span></div></div>
+  <div class="cr-actions">
+    <a href="index.html" class="cr-btn"><span>🚪</span> PORTAL</a>
+    <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+    <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const safeGet = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  /* DNA Analyst = the three "Detection" profiles from the slides.
+     Other roles = one profile built from the quiz's role details and answer text. */
+  const P = (name, role, env, edu, pay) => ({ name, role, env, edu, pay });
+  const PROFILES = {
+    'DNA Analyst': [
+      P('DNA Analyst', 'Extracts and profiles DNA, comparing samples to known profiles to identify suspects or victims.', 'Work in controlled laboratories, reviewing case documentation, extracting DNA, and preparing samples. They also complete quality checks and use lab instruments. At some times it is a technical job and other times it involves meeting and preparation.', 'Bachelor\u2019s Degree (at a minimum)', '$67,440-$81,367'),
+      P('Laboratory Assistant/Chemical Technician', 'Prepares, cleans, and maintains laboratory equipment, logs evidence samples, and performs basic supportive testing under supervision.', 'Tasks occur in indoor labs and workers handle hazardous materials.', 'Associate Degree', '$40,000-$48,000'),
+      P('Forensic Biology Specialist', 'Examines biological evidence (hair, etc) to reconstruct crime events and understand how these materials connect to a case.', 'Work in a controlled laboratory environment, receiving evidence, interpreting data, running tests and making samples. They also collaborate with forensic biologists.', 'Bachelor\u2019s Degree (at a minimum)', '$89,403, could be up to $137,000 (beyond entry level)')
+    ],
+    'Bioprocess Engineer': [P('Bioprocess Engineer', 'Designs bioreactor equipment and fermentation pipelines to scale microbial proteins, biofuels, and bioplastics.', 'Outdoor field sites, marine research vessels, or water-monitoring testing stations.', 'Bachelor\u2019s Degree', '$112,139')],
+    'Clinical Technician': [P('Clinical Technician', 'Prepares patient specimens, operates robotic analyzers, and performs clinical tests in diagnostic hospital environments.', 'Diagnostic labs, blood banks, or clinical pathology departments within hospitals.', 'Associate\u2019s or Bachelor\u2019s', '$45,162')],
+    'Quality Systems Specialist': [P('Quality Systems Specialist', 'Audits laboratory SOPs and manufacturing protocols to ensure treatments comply with strict government standards.', 'Corporate offices, regulatory compliance desks, or pharmaceutical quality wings.', 'Bachelor\u2019s Degree', '$93,599')],
+    'Plant Geneticist': [P('Plant Geneticist', 'Applies gene editing to manipulate crop DNA, improving harvest yields, disease immunity, and climate tolerance.', 'High-tech greenhouses, botanical gardens, or agricultural tissue culture farms.', 'Bachelor\u2019s or Master\u2019s', '$106,000')],
+    'Discovery Research Scientist': [P('Discovery Research Scientist', 'Conducts wet-lab screening experiments to invent therapeutic molecules and target novel cancer therapies.', 'High-tech pharmaceutical R&D cleanrooms, robotics suites, or university wet labs.', 'Bachelor\u2019s or Ph.D.', '$115,000')]
+  };
+  const saved = safeGet('biotech_matched_role');
+  const role = PROFILES[saved] ? saved : 'DNA Analyst';
+  const list = PROFILES[role];
+  const detection = role === 'DNA Analyst';
+  document.getElementById('current-role').textContent = role.toUpperCase();
+  document.getElementById('title').textContent = detection ? 'CAREER PROFILE (DETECTION)' : 'CAREER PROFILE';
+  const go = document.getElementById('go');
+  go.href = detection ? 'dilt.html' : 'jobsim.html';
+  let i = 0;
+  const prev = document.getElementById('prev'), next = document.getElementById('next');
+  function render() {
+    const p = list[i];
+    document.getElementById('body').innerHTML = `<h2>${p.name}</h2><ul>
+      <li><b>Role:</b> ${p.role}</li><li><b>Work Environment:</b> ${p.env}</li>
+      <li><b>Level of Education:</b> ${p.edu}</li><li><b>Salary:</b> ${p.pay}</li></ul>`;
+    document.getElementById('dots').textContent = list.length > 1 ? (i + 1) + ' / ' + list.length : '';
+    const last = i === list.length - 1;
+    prev.hidden = next.hidden = list.length === 1;
+    prev.disabled = i === 0;
+    next.hidden = list.length === 1 || last;
+    go.hidden = !last;
+  }
+  prev.onclick = () => { if (i > 0) { i--; render(); } };
+  next.onclick = () => { if (i < list.length - 1) { i++; render(); } };
+  render();
+})();
+</script>
+<script src="helix.js"></script>
+<script src="labnotebook.js"></script>
+<script src="biobot.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Simulation | The DNA of Career Exploration</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧪%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  .js-stage{position:relative;z-index:20;display:flex;flex-direction:column;align-items:center;width:100%;max-width:960px;flex:1;min-height:0;margin:auto 0;gap:.7rem;padding:0 1rem;overflow-y:auto}
+  .js-title{font-size:clamp(1rem,1.4vw,1.45rem);letter-spacing:2px;color:var(--cyan-primary);text-shadow:0 0 10px var(--cyan-glow);text-align:center}
+  .js-intro,.js-note{font-family:var(--font-body);font-size:1rem;max-width:780px;text-align:center;color:#9abce8;line-height:1.45}
+  .js-card{width:100%;background:rgba(11,15,39,.9);border:2.5px solid var(--card-border);border-radius:22px;padding:1.1rem 1.3rem;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+  .js-row{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;width:100%}
+  .jb{background:#000;border:2.5px solid #fff;border-radius:14px;color:#fff;font-family:var(--font-body);font-weight:700;font-size:.95rem;padding:.7rem 1rem;cursor:pointer;transition:all .2s;text-decoration:none;text-align:center}
+  .jb:hover:not(:disabled){background:#fff;color:#000;transform:translateY(-2px)}
+  .jb:disabled{cursor:default}.jb.ok{border-color:#9be06a;color:#9be06a;opacity:.7}
+  .jb.sel{border-color:var(--cyan-primary);color:var(--cyan-primary);box-shadow:0 0 14px var(--cyan-glow)}
+  .jb.go{font-family:var(--font-retro);font-size:.62rem;letter-spacing:1.5px;border-color:var(--cyan-primary);color:var(--cyan-primary)}
+  .jb:focus-visible{outline:3px solid var(--cyan-primary);outline-offset:2px}
+  .js-fb{font-family:var(--font-body);font-weight:700;font-size:1.02rem;color:#9be06a;text-align:center;max-width:780px;min-height:1.4em}
+  .js-fb.warn{color:#ffd166}.js-fb.bad{color:#ff5c6c}
+  /* gel */
+  .lane{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.5rem;letter-spacing:1px;color:#8edddb;cursor:pointer}
+  .lane.static{cursor:default}.lane:not(.static):hover .gl{border-color:var(--cyan-primary)}
+  .gl{position:relative;width:84px;height:210px;background:#050a1e;border:2px solid var(--card-border);border-radius:8px}
+  .gl i{position:absolute;left:10%;width:80%;height:6px;border-radius:3px;background:var(--cyan-primary);box-shadow:0 0 8px var(--cyan-glow)}
+  /* bioreactor */
+  .ctl{display:grid;grid-template-columns:150px 1fr 90px;gap:.8rem;align-items:center;width:100%;font-family:var(--font-body);font-weight:700}
+  .ctl small{display:block;color:#82a8de;font-weight:600}.ctl input{width:100%;accent-color:#4deeea}
+  .ctl output{font-family:var(--font-retro);font-size:.65rem;text-align:right}
+  .in{color:#9be06a}.out{color:#ff5c6c}
+  .bar{width:100%;height:26px;border:2px solid #5b7da8;border-radius:20px;background:#000;overflow:hidden}
+  .bar div{height:100%;width:0;background:var(--pink-exp);box-shadow:0 0 12px var(--pink-glow);transition:width .3s}
+  /* tables */
+  .trow{display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap;width:100%;border-bottom:1px solid rgba(94,150,219,.3);padding:.4rem 0;font-family:var(--font-body);font-weight:700}
+  .trow em{font-style:normal;color:var(--cyan-primary)}.trow small{display:block;color:#82a8de;font-weight:600}.trow small.w{color:#ffd166}
+  .doc{width:100%;font-family:'Courier New',monospace;font-size:.95rem}
+  .doc button{display:block;width:100%;text-align:left;background:rgba(5,10,30,.9);color:#dbe6fa;border:2px solid transparent;border-radius:8px;padding:.55rem .8rem;margin-bottom:4px;font:inherit;cursor:pointer}
+  .doc button:hover{border-color:#5b7da8}.doc button.sel{border-color:#ff5c6c;background:rgba(255,92,108,.15)}
+  .seq{font-family:'Courier New',monospace;font-size:1.15rem;letter-spacing:3px;word-break:break-all;text-align:center;line-height:1.8}
+  .seq mark{background:rgba(77,238,234,.3);color:#fff;padding:2px 0;border-radius:3px}
+  .seq mark.good{background:#2f8f4f}.seq mark.bad{background:#a8323e}
+  .plate{display:grid;grid-template-columns:28px repeat(8,1fr);gap:5px;width:100%;max-width:720px;font-family:var(--font-retro);font-size:.5rem}
+  .plate span{display:grid;place-items:center;color:#8edddb}
+  .well{aspect-ratio:1;border-radius:50%;border:2px solid #5b7da8;color:#fff;font:700 .8rem var(--font-body);cursor:pointer;background:rgba(255,82,177,var(--a,.1))}
+  .well.sel{border:3px solid var(--cyan-primary);box-shadow:0 0 12px var(--cyan-primary)}
+  .win{display:none;border-color:var(--cyan-primary);box-shadow:0 0 30px var(--cyan-glow)}.win.show{display:flex}
+  .win h2{font-size:clamp(1rem,1.4vw,1.4rem);color:var(--pink-exp);text-shadow:0 0 14px var(--pink-glow)}
+  .win p{font-family:var(--font-body);font-size:1.05rem;color:#c9daf8;text-align:center;max-width:620px;line-height:1.5}
+  @media (max-width:700px){.ctl{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="crispr-page">
+<div class="scanlines"></div>
+<canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+<canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+<main class="js-stage">
+  <h1 class="js-title" id="title">JOB SIMULATION</h1>
+  <p class="js-intro" id="intro"></p>
+  <section class="js-card" id="sim"></section>
+  <div class="js-fb" id="fb" role="status" aria-live="polite"></div>
+  <section class="js-card win" id="win">
+    <h2>DAY IN THE LIFE COMPLETE!</h2>
+    <p id="win-text"></p>
+    <div class="js-row">
+      <a class="jb go" href="steps.html?step=3">NEXT: INDUSTRY TRAINING &rarr;</a>
+      <button class="jb" id="replay" type="button">REPLAY</button>
+      <a class="jb" href="profile.html">VIEW CAREER PROFILE</a>
+    </div>
+  </section>
+</main>
+
+<footer class="cr-bar">
+  <div class="role-display-pill"><span class="role-label">ROLE:</span><span class="role-value" id="current-role">DNA ANALYST</span></div>
+  <div class="cr-exp"><div class="cr-exp-track"><div class="cr-exp-fill" id="exp-fill" style="width:70%"></div><span class="cr-exp-label">JOB SIMULATION</span></div></div>
+  <div class="cr-actions">
+    <a href="index.html" class="cr-btn"><span>🚪</span> EXIT SIM</a>
+    <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+    <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const sg = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const ss = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const shuffle = (a) => a.map((v) => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map((p) => p[1]);
+  const sim = $('#sim'), fbEl = $('#fb');
+  const fb = (m, c) => { fbEl.textContent = m || ''; fbEl.className = 'js-fb ' + (c || ''); };
+  let timer = null;
+
+  function done(msg) {
+    clearInterval(timer);
+    ss('biotech_jobsim_complete', 'true');
+    ss('biotech_jobsim_role', role);
+    $('#exp-fill').style.width = '100%';
+    $('#win-text').textContent = msg;
+    $('#win').classList.add('show');
+    if (window.setBioGuideSpeech) setBioGuideSpeech('Great work, ' + role + '! Next up: Industry Training.');
+  }
+
+  /* ---------- 1. DNA ANALYST ---------- */
+  function dnaAnalyst() {
+    const steps = ['Seal & label the evidence (chain of custody)', 'Extract DNA from the sample', 'Amplify target regions with PCR', 'Run the gel (electrophoresis)', 'Compare the bands to the suspects'];
+    let n = 0;
+    sim.innerHTML = '<div class="js-row" id="st"></div>';
+    shuffle([...steps.keys()]).forEach((i) => {
+      const b = document.createElement('button');
+      b.className = 'jb'; b.type = 'button'; b.textContent = steps[i];
+      b.onclick = () => {
+        if (i !== n) return fb('Not yet. What has to happen before that step?', 'warn');
+        b.disabled = true; b.classList.add('ok'); n++;
+        fb('Step ' + n + ' of ' + steps.length + ' logged.');
+        if (n === steps.length) gel();
+      };
+      $('#st').appendChild(b);
+    });
+    fb('Click the forensic workflow in the correct order.');
+
+    function gel() {
+      const ev = [12, 30, 55, 78];
+      const S = shuffle([[12, 34, 55, 70], [18, 30, 60, 78], [12, 30, 55, 78], [12, 30, 48, 78]]);
+      const lane = (label, b, k) => `<div class="lane${k === undefined ? ' static' : ''}" data-k="${k}"><div class="gl">${b.map((y) => `<i style="top:${y}%"></i>`).join('')}</div>${label}</div>`;
+      sim.innerHTML = `<p class="js-note">The gel is done. Which suspect's bands match the crime-scene lane exactly? Click a lane.</p>
+        <div class="js-row">${lane('EVIDENCE', ev)}${S.map((b, i) => lane('SUSPECT ' + (i + 1), b, i)).join('')}</div>`;
+      sim.querySelectorAll('.lane:not(.static)').forEach((l) => l.onclick = () => {
+        const ok = JSON.stringify(S[+l.dataset.k]) === JSON.stringify(ev);
+        if (ok) done('Perfect match on all four bands. Real analysts also confirm with more markers before a report goes to court.');
+        else fb('Close, but at least one band is off. Compare every band position again.', 'bad');
+      });
+      fb('');
+    }
+  }
+
+  /* ---------- 2. BIOPROCESS ENGINEER ---------- */
+  function bioprocess() {
+    const P = [
+      { n: 'TEMPERATURE', u: '\u00B0C', min: 20, max: 45, step: .1, v: 31, lo: 35.5, hi: 38.5, d: .45 },
+      { n: 'pH', u: '', min: 5, max: 9, step: .05, v: 6, lo: 6.7, hi: 7.3, d: .1 },
+      { n: 'DISSOLVED O\u2082', u: '%', min: 0, max: 100, step: 1, v: 80, lo: 40, hi: 60, d: 5 }
+    ];
+    sim.innerHTML = P.map((p, i) => `<label class="ctl"><span>${p.n}<small>target ${p.lo}\u2013${p.hi} ${p.u}</small></span>
+      <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.v}" data-i="${i}"><output id="o${i}"></output></label>`).join('')
+      + '<div class="bar" aria-label="Culture yield"><div id="yield"></div></div>';
+    const ins = sim.querySelectorAll('input');
+    let y = 0;
+    const inR = (p) => p.v >= p.lo && p.v <= p.hi;
+    const paint = () => P.forEach((p, i) => { const o = $('#o' + i); o.textContent = (+p.v).toFixed(p.step < 1 ? 1 : 0) + p.u; o.className = inR(p) ? 'in' : 'out'; ins[i].value = p.v; });
+    ins.forEach((el) => el.oninput = () => { P[+el.dataset.i].v = +el.value; paint(); });
+    paint();
+    fb('Keep all three readings in their target zones. The culture drifts, so keep correcting!');
+    timer = setInterval(() => {
+      P.forEach((p) => { p.v = Math.min(p.max, Math.max(p.min, p.v + (Math.random() - .5) * 2 * p.d)); });
+      const k = P.filter(inR).length;
+      y = Math.max(0, Math.min(100, y + [-2, 0, 1, 4][k]));
+      $('#yield').style.width = y + '%';
+      paint();
+      fb(k === 3 ? 'All parameters in range. Culture is growing!' : k + ' of 3 in range. Yield is ' + (k === 0 ? 'crashing!' : 'stalling.'), k === 3 ? '' : 'warn');
+      if (y >= 100) done('Yield target reached. Real bioprocess engineers automate these controls, but they still decide what the targets should be.');
+    }, 400);
+  }
+
+  /* ---------- 3. CLINICAL TECHNICIAN ---------- */
+  function clinical() {
+    const R = [
+      ['S-101', 'Glucose', '92 mg/dL', '70\u201399', 'N'],
+      ['S-102', 'Potassium', '6.1 mmol/L', '3.5\u20135.1', 'A'],
+      ['S-103', 'Hemoglobin', '13.8 g/dL', '12.0\u201316.0', 'N'],
+      ['S-104', 'WBC count', '15.2 \u00D710\u00B3/\u00B5L', '4.5\u201311.0', 'A'],
+      ['S-105', 'Sodium', '140 mmol/L', '135\u2013145', 'R', 'Tube label: J. Rivera / Order form: J. Rivero'],
+      ['S-106', 'Platelets', '90 \u00D710\u00B3/\u00B5L', '150\u2013400', 'A']
+    ];
+    const pick = {};
+    const L = { N: 'NORMAL', A: 'FLAG ABNORMAL', R: 'REJECT SAMPLE' };
+    sim.innerHTML = R.map((r, i) => `<div class="trow"><div>${r[0]} \u00B7 ${r[1]}: <em>${r[2]}</em><small>reference ${r[3]}</small>${r[5] ? `<small class="w">${r[5]}</small>` : ''}</div>
+      <div class="js-row" style="width:auto">${['N', 'A', 'R'].map((c) => `<button type="button" class="jb" data-i="${i}" data-c="${c}">${L[c]}</button>`).join('')}</div></div>`).join('')
+      + '<button type="button" class="jb go" id="sub">SUBMIT RESULTS</button>';
+    sim.querySelectorAll('.trow .jb').forEach((b) => b.onclick = () => {
+      pick[b.dataset.i] = b.dataset.c;
+      b.parentNode.querySelectorAll('.jb').forEach((x) => x.classList.toggle('sel', x === b));
+    });
+    $('#sub').onclick = () => {
+      if (Object.keys(pick).length < R.length) return fb('Make a call on every sample first.', 'warn');
+      const wrong = R.filter((r, i) => pick[i] !== r[4]).map((r) => r[0]);
+      if (!wrong.length) done('All six handled correctly. Catching a mislabeled tube before it is run protects the patient as much as the test itself.');
+      else fb(wrong.length + ' call(s) need a second look: ' + wrong.join(', ') + '. Compare each value to its range and check the labels.', 'bad');
+    };
+    fb('Check each sample against its reference range and its label, then submit.');
+  }
+
+  /* ---------- 4. QUALITY SYSTEMS SPECIALIST ---------- */
+  function quality() {
+    const L = [
+      ['Step 1 | Balance calibration verified 11/09/26 | Init: KT', 0],
+      ['Step 2 | Buffer lot B-4471 | Exp 03/2025 | Used 11/10/26', 1],
+      ['Step 3 | Incubation spec 36\u201338 \u00B0C | Recorded: 31 \u00B0C | Init: MR', 1],
+      ['Step 4 | Reagent weighed 25.0 g (limit 24.5\u201325.5 g) | Init: KT', 0],
+      ['Step 5 | Filtration complete | Operator signature: ________', 1],
+      ['Step 6 | Final volume: 4.5 L crossed out, 4.8 L written over, no initials or date', 1],
+      ['Step 7 | pH 7.1 (spec 6.8\u20137.4) | Second-person check: JL', 0]
+    ];
+    const flag = new Set();
+    sim.innerHTML = '<p class="js-note">Click every line that would fail an audit. Then submit.</p><div class="doc">'
+      + L.map((l, i) => `<button type="button" data-i="${i}">${l[0]}</button>`).join('') + '</div><button type="button" class="jb go" id="sub">SUBMIT AUDIT</button>';
+    sim.querySelectorAll('.doc button').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i; flag.has(i) ? flag.delete(i) : flag.add(i); b.classList.toggle('sel');
+    });
+    $('#sub').onclick = () => {
+      const bad = L.map((l, i) => (l[1] ? i : -1)).filter((i) => i >= 0);
+      const found = bad.filter((i) => flag.has(i)).length, falseF = [...flag].filter((i) => !L[i][1]).length;
+      if (found === bad.length && !falseF) done('Audit complete: 4 of 4 deviations found and no false alarms. These would each become a documented deviation with a corrective action.');
+      else fb(`Found ${found} of ${bad.length} problems with ${falseF} false flag(s). Re-read each line: dates, specs, signatures, corrections.`, 'bad');
+    };
+    fb('');
+  }
+
+  /* ---------- 5. PLANT GENETICIST ---------- */
+  function plant() {
+    const S = 'TTGACCATGCAAGTCCGTAAGGATCCTAGCTAACGTCATGG';
+    const G = shuffle(['GCTAACGTCA', 'TGCAAGTCCG', 'GTCCGTAAGG', 'ATCCTAGCTA', 'GCTAACGTAA']).slice(0, 5);
+    let sel = null;
+    const draw = () => {
+      let h = S;
+      if (sel) {
+        const i = S.indexOf(sel);
+        if (i >= 0) {
+          const pam = S.substr(i + 10, 3), ok = pam[1] === 'G' && pam[2] === 'G';
+          h = S.slice(0, i) + `<mark>${sel}</mark><mark class="${ok ? 'good' : 'bad'}">${pam}</mark>` + S.slice(i + 13);
+        }
+      }
+      $('#seq').innerHTML = '5\u2032-' + h + '-3\u2032';
+    };
+    sim.innerHTML = `<p class="js-note">Round 1: Make the drought-tolerance edit. Cas9 can only cut where the guide binds <b>and</b> the next 3 bases (the PAM) read <b>N-G-G</b>. Pick a guide.</p>
+      <div class="seq" id="seq"></div><div class="js-row" id="gs">${G.map((g) => `<button type="button" class="jb" data-g="${g}">${g}</button>`).join('')}</div>
+      <button type="button" class="jb go" id="cut">LOAD CAS9 &amp; CUT</button>`;
+    draw();
+    sim.querySelectorAll('#gs .jb').forEach((b) => b.onclick = () => { sel = b.dataset.g; sim.querySelectorAll('#gs .jb').forEach((x) => x.classList.toggle('sel', x === b)); draw(); });
+    $('#cut').onclick = () => {
+      if (!sel) return fb('Choose a guide RNA first.', 'warn');
+      const i = S.indexOf(sel);
+      if (i < 0) return fb('That guide does not match the target gene anywhere. Cas9 would not cut.', 'bad');
+      const pam = S.substr(i + 10, 3);
+      if (pam[1] !== 'G' || pam[2] !== 'G') return fb(`The guide binds, but the PAM is "${pam}", not N-G-G. Cas9 cannot cut here.`, 'bad');
+      fb('Clean cut! The gene is edited.');
+      regen();
+    };
+    fb('');
+    function regen() {
+      sim.innerHTML = `<p class="js-note">Round 2: Your edited cells have formed an undifferentiated callus in tissue culture. Which growth medium pushes it to grow <b>shoots</b>?</p>
+        <div class="js-row">${[['High cytokinin, low auxin', 1], ['High auxin, low cytokinin', 0], ['Balanced auxin and cytokinin', 0]].map((o) => `<button type="button" class="jb" data-ok="${o[1]}">${o[0]}</button>`).join('')}</div>`;
+      sim.querySelectorAll('.jb').forEach((b) => b.onclick = () => {
+        if (b.dataset.ok === '1') done('Shoots are forming. From guide design to regenerated plants, that is the Plant Geneticist workflow, and it takes months in real life.');
+        else fb('Not quite. A balanced ratio keeps the callus growing, and high auxin favors roots.', 'bad');
+      });
+      fb('');
+    }
+  }
+
+  /* ---------- 6. DISCOVERY RESEARCH SCIENTIST ---------- */
+  function discovery() {
+    const hits = { B3: 82, C6: 91, D2: 74, E7: 70, F4: 88 }, decoy = { A5: 69, D6: 66, B8: 58 };
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const rows = 'ABCDEF'.split(''), flag = new Set();
+    let h = '<span></span>' + [1, 2, 3, 4, 5, 6, 7, 8].map((c) => `<span>${c}</span>`).join('');
+    rows.forEach((r) => {
+      h += `<span>${r}</span>`;
+      for (let c = 1; c <= 8; c++) { const id = r + c, v = hits[id] ?? decoy[id] ?? Math.round(rnd() * 40); h += `<button type="button" class="well" data-id="${id}" style="--a:${(v / 100 * .85).toFixed(2)}" aria-label="Well ${id}, ${v} percent inhibition">${v}</button>`; }
+    });
+    sim.innerHTML = `<p class="js-note">Each well shows % inhibition of the cancer-cell target (0% = negative control, 100% = positive control). A real <b>hit</b> is <b>70% or higher</b>. Click every hit, then submit.</p>
+      <div class="plate">${h}</div><button type="button" class="jb go" id="sub">SUBMIT HITS</button>`;
+    sim.querySelectorAll('.well').forEach((w) => w.onclick = () => { const id = w.dataset.id; flag.has(id) ? flag.delete(id) : flag.add(id); w.classList.toggle('sel'); });
+    $('#sub').onclick = () => {
+      const want = Object.keys(hits), found = want.filter((i) => flag.has(i)).length, falseF = [...flag].filter((i) => !hits[i]).length;
+      if (found === want.length && !falseF) done('All 5 true hits found and no false positives. In the real world, most plates have none, which is why resilience is part of this job.');
+      else fb(`${found} of ${want.length} hits found, ${falseF} false positive(s). Check the 70% cutoff, especially near the line.`, 'bad');
+    };
+    fb('');
+  }
+
+  const SIMS = {
+    'DNA Analyst': ['CASE FILE: MATCH THE PROFILE', 'A burglary suspect left DNA behind. Process the evidence in the right order, then match the gel.', dnaAnalyst],
+    'Bioprocess Engineer': ['KEEP THE BIOREACTOR ALIVE', 'Your microbes make a biodegradable plastic. Hold temperature, pH, and oxygen in range long enough to fill the yield bar.', bioprocess],
+    'Clinical Technician': ['LAB RESULTS TRIAGE', 'Six patient samples just came off the analyzer. Decide which are normal, which need flagging, and which should never have been run.', clinical],
+    'Quality Systems Specialist': ['BATCH RECORD AUDIT', 'A manufacturing batch is waiting for release. Review the record and catch what an FDA auditor would.', quality],
+    'Plant Geneticist': ['EDIT THE GENE', 'Edit a crop gene for drought tolerance, then grow the edited cells into plants.', plant],
+    'Discovery Research Scientist': ['HIT SCREENING', 'A 48-well plate of candidate molecules was just read. Separate true hits from near misses.', discovery]
+  };
+  const saved = sg('biotech_matched_role');
+  const role = SIMS[saved] ? saved : 'DNA Analyst';
+  $('#current-role').textContent = role.toUpperCase();
+  $('#title').textContent = SIMS[role][0];
+  $('#intro').textContent = SIMS[role][1];
+  const start = () => { $('#win').classList.remove('show'); clearInterval(timer); fb(''); $('#exp-fill').style.width = '70%'; SIMS[role][2](); };
+  $('#replay').onclick = start;
+  start();
+})();
+</script>
+<script src="helix.js"></script>
+<script src="labnotebook.js"></script>
+<script src="biobot.js"></script>
+</body>
+</html>
