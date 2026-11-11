@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Next Steps | The DNA of Career Exploration</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧬%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  .op-stage{position:relative;z-index:20;display:flex;flex-direction:column;align-items:center;width:100%;max-width:900px;flex:1;min-height:0;margin:auto 0;gap:.5rem;padding:0 1rem}
+  .op-title{font-size:clamp(1rem,1.6vw,1.6rem);letter-spacing:2px;color:var(--cyan-primary);text-shadow:0 0 10px var(--cyan-glow);text-align:center}
+  .op-sub{font-size:.65rem;letter-spacing:2px;color:#5b83b8}
+  .pair{display:flex;align-items:center;gap:1rem;width:100%;max-width:520px}
+  .pair .b{width:46px;height:46px;display:grid;place-items:center;border-radius:6px;font-size:.9rem;color:#fff;flex:none}
+  .pair .c{background:#4fb0cf}.pair .g{background:var(--pink-exp)}
+  .pair .bonds{flex:1;display:flex;flex-direction:column;gap:10px}.pair .bonds span{border-top:2px dashed #84b69a}
+  .op-card{width:100%;flex:1;min-height:0;background:#1e3a6e;border-radius:34px;padding:1rem 1.3rem;display:flex;flex-direction:column;gap:.7rem;box-shadow:0 10px 40px rgba(0,0,0,.8)}
+  .tabs,.subtabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+  .tab{font-family:var(--font-retro);font-size:.52rem;letter-spacing:1px;padding:.6rem .9rem;border:2px solid #fff;border-radius:30px;background:#000;color:#4fb0cf;cursor:pointer}
+  .tab:hover,.tab.on{background:#4fb0cf;color:#03040f}
+  .tab:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .subtabs .tab{font-size:.46rem;padding:.45rem .7rem;border-width:1.5px}
+  .panel{flex:1;min-height:0;overflow-y:auto;background:#03040f;border:2px solid #fff;border-radius:24px;padding:1rem 1.3rem;font-family:var(--font-body);color:#dbe6fa}
+  .panel h3{font-size:1.05rem;color:#4fb0cf;margin:.2rem 0 .6rem;text-align:center}
+  .panel h4{font-size:1rem;color:var(--cyan-primary);margin:.9rem 0 .3rem}
+  .panel h4 a{color:inherit}
+  .panel ul{list-style:none}
+  .panel li{padding:.45rem .2rem;border-bottom:1px solid rgba(94,150,219,.25);font-weight:600;display:flex;justify-content:space-between;gap:1rem;align-items:baseline}
+  .panel li .s{font-size:.85rem;color:#8edddb;white-space:nowrap;text-align:right}
+  .panel p{font-weight:600;line-height:1.5;margin:.25rem 0}.panel p b{color:#fff}
+  .panel .rk{color:#ff66c4;font-family:var(--font-retro);font-size:.55rem;margin-right:.6rem}
+  .op-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+  .op-btn{background:#000;border:2px solid #fff;border-radius:30px;color:#4fb0cf;font-family:var(--font-retro);font-size:.58rem;letter-spacing:1.5px;padding:.7rem 1.4rem;text-decoration:none;transition:all .2s}
+  .op-btn:hover{background:#4fb0cf;color:#03040f}
+</style>
+</head>
+<body class="crispr-page">
+<div class="scanlines"></div>
+<canvas id="dna-left" class="dna-canvas dna-left"></canvas>
+<canvas id="dna-right" class="dna-canvas dna-right"></canvas>
+
+<main class="op-stage">
+  <h1 class="op-title">MOLECULAR BASE PAIRS</h1>
+  <p class="op-sub">(1,000,000X)</p>
+  <div class="pair"><div class="b c">C</div><div class="bonds"><span></span><span></span></div><div class="b g">G</div></div>
+  <section class="op-card">
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-t="col" type="button" role="tab">COLLEGES</button>
+      <button class="tab" data-t="crs" type="button" role="tab">ONLINE COURSES &amp; SKILL BUILDING</button>
+      <button class="tab" data-t="int" type="button" role="tab">INTERNSHIPS</button>
+    </div>
+    <div class="subtabs" id="subtabs"></div>
+    <div class="panel" id="panel" aria-live="polite"></div>
+    <div class="op-row"><a class="op-btn" href="training.html#cert">&larr; CERTIFICATE</a><a class="op-btn" href="index.html">HOME</a></div>
+  </section>
+</main>
+
+<footer class="cr-bar">
+  <div class="role-display-pill"><span class="role-label">ROLE:</span><span class="role-value" id="current-role">TAKE THE QUIZ TO MATCH!</span></div>
+  <div class="cr-exp"><div class="cr-exp-track"><div class="cr-exp-fill" style="width:calc(100% - 8px)"></div><span class="cr-exp-label">EXP</span></div></div>
+  <div class="cr-actions">
+    <a href="index.html" class="cr-btn"><span>🚪</span> PORTAL</a>
+    <button class="cr-btn" type="button"><span>📓</span> LAB NOTEBOOK</button>
+    <button class="cr-btn" type="button"><span>🤖</span> BIO-BOT 9000</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const sg = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const role = sg('biotech_matched_role');
+  if (role) $('#current-role').textContent = role.toUpperCase();
+
+  /* [school, subject score, global score] */
+  const COLLEGES = {
+    'ENVIRONMENTAL & AQUATIC': { score: 1, list: [
+      ['University of California\u2013Berkeley (UC Berkeley)', 90.4], ['Yale University\u2013New Haven', 89], ['University of California (UCLA)', 86.8],
+      ['Harvard University\u2013Cambridge', 86.6], ['Cornell University\u2013Ithaca', 83.7]] },
+    'AGRICULTURAL': { score: 2, list: [
+      ['University of Massachusetts\u2013Amherst', 85.8, 64.5], ['Cornell University', 80.9, 84.2], ['University of California\u2013Davis', 78.2, 70.0],
+      ['University of Florida', 69.8, 68.3], ['Harvard University', 69.6, 100.0]] },
+    'DRUG DISCOVERY': { list: [['University of Southern California'], ['Purdue University\u2013Main Campus'], ['Tufts University'], ['University of Washington\u2013Seattle Campus'], ['George Washington University']] },
+    'DETECTION': { list: [['Pennsylvania State University (Penn State)'], ['Saint Louis University (SLU)'], ['George Mason University'], ['CUNY John Jay College of Criminal Justice'], ['University of Central Florida (UCF)']] },
+    'MEDICAL': { list: [['Stony Brook University'], ['University of Washington'], ['Rutgers University'], ['Purdue University'], ['Harvard University'], ['University of North Carolina at Chapel Hill'], ['Johns Hopkins University'], ['Nova Southeastern University'], ['Samford University']] },
+    'REGULATORY': { list: [['University of Phoenix'], ['University of Puerto Rico\u2013Rio Piedras Campus'], ['American InterContinental University'], ['University of California, Santa Barbara'], ['Northeastern University'], ['Harvard University'], ['Massachusetts Institute of Technology'], ['Cornell University'], ['University of Washington'], ['University of California\u2013San Diego']] }
+  };
+  /* quiz role -> pathway tab (pre-selects the student's own pathway) */
+  const ROLE_TAB = { 'DNA Analyst': 'DETECTION', 'Bioprocess Engineer': 'ENVIRONMENTAL & AQUATIC', 'Clinical Technician': 'MEDICAL',
+    'Quality Systems Specialist': 'REGULATORY', 'Plant Geneticist': 'AGRICULTURAL', 'Discovery Research Scientist': 'DRUG DISCOVERY' };
+  const INTERNSHIPS = ['U.S. Food and Drug Administration', 'Talon Biomarkers', 'Johns Hopkins University', 'Montclair State University \u2013 The Sokol Institute', 'Tara Innovations LLC',
+    'Granulation Technologies, Inc.', 'NJIT School of Applied Engineering and Technology', 'NJIT John A. Reif, Jr. Department of Civil & Environmental Engineering',
+    'Atlantic Health \u2013 Morristown Medical Center', 'Bayer Pharmaceuticals', 'Columbia University', 'Takeda', 'Valley Pharmacy', 'ZebraSci'];
+
+  let tab = 'col', path = ROLE_TAB[role] || 'ENVIRONMENTAL & AQUATIC';
+
+  function colleges() {
+    const d = COLLEGES[path];
+    const label = path === 'DETECTION' ? 'Best Colleges/Universities' : 'Colleges';
+    return `<h3>${path.replace('&', '&amp;')} \u2013 ${label}</h3><ul>` + d.list.map((c, i) => {
+      const sc = c.length > 1 ? `<span class="s">Subject Score: ${c[1]}${c[2] !== undefined ? `<br>Global Score: ${c[2]}` : ''}</span>` : '';
+      return `<li><span>${d.score ? `<span class="rk">#${i + 1}</span>` : ''}${c[0].replace('&', '&amp;')}</span>${sc}</li>`;
+    }).join('') + '</ul>';
+  }
+  const courses = () => `<h3>Top Platforms &amp; Free Courses</h3>
+    <h4><a href="https://www.coursera.org" target="_blank" rel="noopener">Coursera</a></h4>
+    <ul><li>Industrial Biotechnology (University of Manchester)</li><li>Drug Discovery and Drug Development (University of California, San Diego)</li><li>Systems Biology and Biotechnology Specialization (Icahn School of Medicine at Mount Sinai)</li></ul>
+    <h4><a href="https://www.edx.org" target="_blank" rel="noopener">edX</a></h4>
+    <ul><li>The Science and Business of Biotechnology (MITx) \u2013 covers gene therapy, CRISPR, and the financial structure of biotech firms.</li></ul>
+    <h4><a href="https://www.futurelearn.com" target="_blank" rel="noopener">FutureLearn</a></h4>
+    <ul><li>From DNA to Cure: Gene and Gene-Modified Cell Therapies for Rare Diseases</li><li>Blue Biotechnology Entrepreneurship and Careers</li></ul>
+    <h4>Alison &amp; Government-Backed Platforms</h4>
+    <p><b>Alison:</b> Offers free certificate and diploma tracks in bioengineering, experimental biotechnology, and project management.</p>
+    <p><b>NIH Office of Intramural Training &amp; Education:</b> Frequently hosts free webinars and specialized research modules. As noted by users on Reddit, the NIH Online Courses are widely regarded for high-quality technical coverage.</p>
+    <p><b>NPTEL &amp; Swayam:</b> Indian government-backed platforms offering free in-depth lecture series on biotechnology, bioinformatics, and pharmacology.</p>`;
+  const internships = () => '<h3>Internships</h3><ul>' + INTERNSHIPS.map((n) => `<li>${n.replace('&', '&amp;')}</li>`).join('') + '</ul>';
+
+  function render() {
+    document.querySelectorAll('.tabs .tab').forEach((b) => b.classList.toggle('on', b.dataset.t === tab));
+    const sub = $('#subtabs');
+    sub.style.display = tab === 'col' ? '' : 'none';
+    sub.innerHTML = tab === 'col' ? Object.keys(COLLEGES).map((k) => `<button type="button" class="tab${k === path ? ' on' : ''}" data-p="${k}">${k.replace('&', '&amp;')}</button>`).join('') : '';
+    sub.querySelectorAll('[data-p]').forEach((b) => b.onclick = () => { path = b.dataset.p; render(); });
+    $('#panel').innerHTML = tab === 'col' ? colleges() : tab === 'crs' ? courses() : internships();
+    $('#panel').scrollTop = 0;
+  }
+  document.querySelectorAll('.tabs .tab').forEach((b) => b.onclick = () => { tab = b.dataset.t; render(); });
+  render();
+})();
+</script>
+<script src="helix.js"></script>
+<script src="labnotebook.js"></script>
+<script src="biobot.js"></script>
+</body>
+</html>
